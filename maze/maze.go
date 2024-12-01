@@ -11,90 +11,101 @@ type Point struct {
 	x, y int
 }
 
-func mazeHandler(w http.ResponseWriter, req *http.Request) {
-	size := 19
-	turnProb := 0.4     // 默认转向概率
-	accRatio := 0.7     // 默认断头路消除比例
-	erosionRatio := 0.5 // 默认侵蚀比例
+const (
+	defaultSize         = 19
+	defaultTurnProb     = 0.4
+	defaultAccRatio     = 0.7
+	defaultErosionRatio = 0.5
+	maxSize             = 100
+)
 
-	// 解析size参数
+const htmlTemplate = `
+<html>
+<head>
+    <style>
+        .container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, auto);
+            gap: 10px;
+            padding: 10px;
+        }
+        .maze-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+`
+
+func parseParams(req *http.Request) (size int, turnProb, accRatio, erosionRatio float64) {
+	size = defaultSize
+	turnProb = defaultTurnProb
+	accRatio = defaultAccRatio
+	erosionRatio = defaultErosionRatio
+
 	if sizeStr := req.URL.Query().Get("size"); sizeStr != "" {
-		if s, err := strconv.Atoi(sizeStr); err == nil && s > 0 && s < 100 {
+		if s, err := strconv.Atoi(sizeStr); err == nil && s > 0 && s < maxSize {
 			size = s
 		}
 	}
 
-	// 解析turn参数
 	if turnStr := req.URL.Query().Get("turn"); turnStr != "" {
 		if t, err := strconv.ParseFloat(turnStr, 64); err == nil && t >= 0 && t <= 1 {
 			turnProb = t
 		}
 	}
 
-	// 解析acc参数
 	if accStr := req.URL.Query().Get("acc"); accStr != "" {
 		if acc, err := strconv.ParseFloat(accStr, 64); err == nil && acc >= 0 && acc <= 1 {
 			accRatio = (acc)
 		}
 	}
 
-	// 解析erosion参数
 	if erosionStr := req.URL.Query().Get("erosion"); erosionStr != "" {
 		if e, err := strconv.ParseFloat(erosionStr, 64); err == nil && e >= 0 && e <= 1 {
 			erosionRatio = e
 		}
 	}
 
-	// 开始 HTML 文档和布局容器
-	fmt.Fprintf(w, `
-	<html>
-	<head>
-		<style>
-			.container {
-				display: grid;
-				grid-template-columns: repeat(3, 1fr);
-				grid-template-rows: repeat(2, auto);
-				gap: 10px;
-				padding: 10px;
-			}
-			.maze-box {
-				border: 1px solid #ccc;
-				padding: 10px;
-			}
-		</style>
-	</head>
-	<body>
-	<div class="container">
-	`)
+	return
+}
+
+func mazeHandler(w http.ResponseWriter, req *http.Request) {
+	size, turnProb, accRatio, erosionRatio := parseParams(req)
+
+	fmt.Fprint(w, htmlTemplate)
 
 	// 生成迷宫和寻找路径
 	maze := generateMaze(size, turnProb)
 	path := findPath(maze)
 
 	// 第一个画布：原始迷宫
-	fmt.Fprintf(w, "<div class='maze-box'><h3>原始迷宫</h3>")
+	fmt.Fprint(w, "<div class='maze-box'><h3>原始迷宫</h3>")
 	renderMaze(w, maze, path, true)
-	fmt.Fprintf(w, "</div>")
+	fmt.Fprint(w, "</div>")
 
 	// 第二个画布：消除断头路后
-	fmt.Fprintf(w, "<div class='maze-box'><h3>堆积后</h3>")
+	fmt.Fprint(w, "<div class='maze-box'><h3>堆积后</h3>")
 	accuMaze(maze, path, accRatio)
 	renderMaze(w, maze, path, true)
-	fmt.Fprintf(w, "</div>")
+	fmt.Fprint(w, "</div>")
 
 	// 第三个画布：侵蚀后
-	fmt.Fprintf(w, "<div class='maze-box'><h3>侵蚀后</h3>")
+	fmt.Fprint(w, "<div class='maze-box'><h3>侵蚀后</h3>")
 	erosionMaze(maze, erosionRatio)
 	renderMaze(w, maze, path, false)
-	fmt.Fprintf(w, "</div>")
+	fmt.Fprint(w, "</div>")
 
 	// 第四、五、六个画布：空白位置
-	fmt.Fprintf(w, "<div class='maze-box'></div>")
-	fmt.Fprintf(w, "<div class='maze-box'></div>")
-	fmt.Fprintf(w, "<div class='maze-box'></div>")
+	fmt.Fprint(w, "<div class='maze-box'></div>")
+	fmt.Fprint(w, "<div class='maze-box'></div>")
+	fmt.Fprint(w, "<div class='maze-box'></div>")
 
 	// 结束 HTML
-	fmt.Fprintf(w, "</div></body></html>")
+	fmt.Fprint(w, "</div></body></html>")
 }
 
 func generateMaze(size int, turnProb float64) [][]int {
@@ -330,7 +341,7 @@ func containsPoint(candidates []Point, p Point) bool {
 	return false
 }
 
-// 辅助函数：判断一个点是否是断头路
+// 辅助函数���判断一个点是否是断头路
 func isDeadEnd(p Point, maze [][]int) bool {
 	size := len(maze)
 	if maze[p.x][p.y] != 0 {
