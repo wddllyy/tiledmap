@@ -12,6 +12,6 @@
 
     总体上是一个：1.生成maze和唯一路径；2.填充岔路,堆积障碍；3.侵蚀障碍，扩宽通路的过程。整体成本较低，可控参数较简单，效果也还不错。
 
-    
+    ![image](https://github.com/wddllyy/mazemap/blob/main/doc/IMG/Screenshot_maze.png)
     
 2. 待续
