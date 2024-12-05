@@ -13,5 +13,6 @@ func main() {
 	http.HandleFunc("/hello", helloHandler)
 	http.HandleFunc("/test/", testHandler)
 	http.HandleFunc("/maze", mazeHandler)
+	http.HandleFunc("/cellular", cellularHandler)
 	log.Fatal(http.ListenAndServe(":9999", nil))
 }
