@@ -197,4 +197,8 @@ func perlinHandler(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprint(w, "</div>")
 }
 
-//http://kitfox.com/projects/perlinNoiseMaker/
+// http://kitfox.com/projects/perlinNoiseMaker/
+// https://hmxs.games/posts/107/index.html
+// https://zhuanlan.zhihu.com/p/260771031
+// https://www.bilibili.com/video/BV19f42197ME
+// https://juejin.cn/post/7085186517588525092
