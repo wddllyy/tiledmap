@@ -37,5 +37,5 @@
        2. 找到联通区域的边界，然后BFS向外探索，直到和其他联通区域相连，然后回溯重建最短路径
        3. 重复上述过程直到把所有区域连接起来
     
-    ![alt text](image.png)
+    ![image](https://github.com/wddllyy/mazemap/blob/main/doc/IMG/Screenshot_cellular.png)
 
