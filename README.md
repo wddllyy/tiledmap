@@ -12,7 +12,7 @@
     5. 在填充完之后，用erosion来模拟侵蚀的过程，把所有的路径侵蚀的宽一些。更像自然地貌。侵蚀的时候，越孤立的障碍物越容易被侵蚀。erosion为1时，则所有的障碍物都被侵蚀掉了。
 
     总体上是一个：1.生成maze和唯一路径；2.填充岔路,堆积障碍；3.侵蚀障碍，扩宽通路的过程。整体成本较低，可控参数较简单。
-    ![image](https://github.com/wddllyy/mazemap/blob/main/doc/IMG/Screenshot_maze.png)
+    ![image](https://github.com/wddllyy/tiledmap/blob/main/doc/IMG/Screenshot_maze.png)
 
     TODO: 
         1. maze生成时，控制生成的唯一路径的长度。
@@ -37,5 +37,5 @@
        2. 找到联通区域的边界，然后BFS向外探索，直到和其他联通区域相连，然后回溯重建最短路径
        3. 重复上述过程直到把所有区域连接起来
     
-    ![image](https://github.com/wddllyy/mazemap/blob/main/doc/IMG/Screenshot_cellular.png)
+    ![image](https://github.com/wddllyy/tiledmap/blob/main/doc/IMG/Screenshot_cellular.png)
 
