@@ -132,7 +132,7 @@ func cellularHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	connectRegionsByBFS(maze)
-	renderMazeWithTitle(w, maze, "通过BFS连接所有区域")
+	renderMazeWithTitle(w, maze, "BFS连接所有区域")
 
 	fmt.Fprint(w, "</div>") // 关闭 container div
 }
