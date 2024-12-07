@@ -202,3 +202,9 @@ func perlinHandler(w http.ResponseWriter, req *http.Request) {
 // https://zhuanlan.zhihu.com/p/260771031
 // https://www.bilibili.com/video/BV19f42197ME
 // https://juejin.cn/post/7085186517588525092
+// https://omo.moe/archives/394/
+// https://replay923.github.io/2018/06/04/PerlinNoise/
+
+// todo:
+// https://indienova.com/indie-game-development/tinykeepdev-procedural-dungeon-generation-algorithm/
+// https://www.gcores.com/articles/168310
