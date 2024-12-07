@@ -1,6 +1,10 @@
 # tiledmap
 一些生成tiledmap的小尝试：
 
+***
+***
+
+
 ## maze：
 基于dfs生成maze，然后在此基础上生成tiledmap
 
@@ -30,7 +34,9 @@
  3. 利用细胞自动机来做侵蚀
    
    
-    
+***
+***
+
 ## cellular：
 基于细胞自动机的方案来生成tiledmap：
 
