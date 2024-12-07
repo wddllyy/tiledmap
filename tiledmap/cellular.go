@@ -166,18 +166,8 @@ func countNeighborsWall(maze [][]int, x, y int) int {
 
 func cellularMaze(maze [][]int) {
 	size := len(maze)
-	// 将左上角3x3区域设置为通道
-	for i := 0; i <= 3; i++ {
-		for j := 0; j <= 3; j++ {
-			maze[i][j] = 0
-		}
-	}
-	// 将右下角3x3区域设置为通道
-	for i := size - 4; i <= size-1; i++ {
-		for j := size - 4; j <= size-1; j++ {
-			maze[i][j] = 0
-		}
-	}
+	setEntranceArea(maze, 0, 0)                                       // 左上角入口
+	setEntranceArea(maze, size-minEntranceSize, size-minEntranceSize) // 右下角出口
 
 	for i := range maze {
 		for j := range maze[i] {
