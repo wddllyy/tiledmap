@@ -1,6 +1,8 @@
 # tiledmap
-一些生成tiledmap的小尝试
-##1. maze
+一些生成tiledmap的小尝试：
+
+1. maze
+   
    这是最基本的，基于生成tiledmaze，进一步来生成地图。
    下面是一个参数模拟"http://127.0.0.1:9999/maze?size=59&turn=0.8&acc=0.95&erosion=0.4"
    
@@ -12,6 +14,7 @@
     5. 在填充完之后，用erosion来模拟侵蚀的过程，把所有的路径侵蚀的宽一些。更像自然地貌。侵蚀的时候，越孤立的障碍物越容易被侵蚀。erosion为1时，则所有的障碍物都被侵蚀掉了。
 
     总体上是一个：1.生成maze和唯一路径；2.填充岔路,堆积障碍；3.侵蚀障碍，扩宽通路的过程。整体成本较低，可控参数较简单。
+
     ![image](https://github.com/wddllyy/tiledmap/blob/main/doc/IMG/Screenshot_maze.png)
 
     TODO: 
@@ -20,7 +23,8 @@
    
    
     
-##2. cellular
+2. cellular
+    
     是一个基于细胞自动机的方案来生成tiledmap
     下面是一个参数模拟："http://127.0.0.1:9999/cellular?size=85&probability=0.6&iterations=5"
 
@@ -39,3 +43,4 @@
     
     ![image](https://github.com/wddllyy/tiledmap/blob/main/doc/IMG/Screenshot_cellular.png)
 
+    TODO:
