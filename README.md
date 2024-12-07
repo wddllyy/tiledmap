@@ -1,6 +1,7 @@
-# mazemap
+# tiledmap
 一些生成tiledmap的小尝试
-1. maze:这是最基本的，基于生成tiledmaze，进一步来生成地图。
+##1. maze
+   这是最基本的，基于生成tiledmaze，进一步来生成地图。
    下面是一个参数模拟"http://127.0.0.1:9999/maze?size=59&turn=0.8&acc=0.95&erosion=0.4"
    
    
@@ -19,4 +20,22 @@
    
    
     
-2. 待续
+##2. cellular
+    是一个基于细胞自动机的方案来生成tiledmap
+    下面是一个参数模拟："http://127.0.0.1:9999/cellular?size=85&probability=0.6&iterations=5"
+
+    1. size 是尺寸
+    2. probability 是随机生成的初始地图里障碍块的占比
+    3. iterations 是细胞自动机的迭代次数，次数越多地图越规整
+
+    原理：
+    1. 初始化一个size*size的地图，随机生成障碍块，障碍块占比为probability
+    2. 迭代计算每个cell的邻居cell的障碍块数量，如果邻居cell的障碍块数量小于4，则该cell变为空白块；若大于5，则该cell变障碍物
+    3. 上述过程迭代iterations次
+    4. 然后计算地图中所有的联通区域，这些区域可能彼此不联通。因此需要一个方法将他们自然地联通起来
+       1. 计算所有的联通区域
+       2. 找到联通区域的边界，然后BFS向外探索，直到和其他联通区域相连，然后回溯重建最短路径
+       3. 重复上述过程直到把所有区域连接起来
+    
+    ![alt text](image.png)
+
