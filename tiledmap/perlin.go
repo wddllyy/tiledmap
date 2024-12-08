@@ -388,3 +388,4 @@ func perlinGrayHandler(w http.ResponseWriter, req *http.Request) {
 // todo:
 // https://indienova.com/indie-game-development/tinykeepdev-procedural-dungeon-generation-algorithm/
 // https://www.gcores.com/articles/168310
+// https://juejin.cn/post/7119679952575954975?from=search-suggest
