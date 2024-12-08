@@ -63,3 +63,30 @@
 
 ### TODO:
 1. 利用分块不同随机率来做到一些对比更鲜明的堆积和稀疏
+
+***
+
+## perlin：
+基于perlin噪声的方案来生成tiledmap：
+
+### 参数解释:
+"http://127.0.0.1:9999/perlin?size=200&scale=4.0&threshold=0&fbm=true"
+
+1. size 是尺寸
+2. scale 是perlin噪声的缩放系数
+3. threshold 是perlin噪声的阈值，大于该阈值的值会被设置为障碍物
+4. fbm 是是否使用fbm，fbm是分形布朗运动，可以生成更自然的噪声
+
+### 原理：
+1. 生成perlin噪声图
+2. 根据阈值生成障碍物（如果使用fbm，则对噪声图进行fbm处理，然后根据阈值生成障碍物）
+3. 计算所有联通区域，并连接他们
+
+![image](https://github.com/wddllyy/tiledmap/blob/main/doc/IMG/Screenshot_perlin.png)
+![image](https://github.com/wddllyy/tiledmap/blob/main/doc/IMG/Screenshot_perlin_fbm.png)
+
+
+
+### TODO:
+
+
