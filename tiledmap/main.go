@@ -15,5 +15,6 @@ func main() {
 	http.HandleFunc("/maze", mazeHandler)
 	http.HandleFunc("/cellular", cellularHandler)
 	http.HandleFunc("/perlin", perlinHandler)
+	http.HandleFunc("/perlingray", perlinGrayHandler)
 	log.Fatal(http.ListenAndServe(":9999", nil))
 }
