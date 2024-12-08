@@ -156,7 +156,7 @@ func perlinHandler(w http.ResponseWriter, req *http.Request) {
 	// 解析参数
 	size := 50
 	if s := req.URL.Query().Get("size"); s != "" {
-		if val, err := strconv.Atoi(s); err == nil && val > 0 && val <= 200 {
+		if val, err := strconv.Atoi(s); err == nil && val > 0 && val <= 512 {
 			size = val
 		}
 	}
@@ -184,7 +184,7 @@ func perlinHandler(w http.ResponseWriter, req *http.Request) {
 	// 修改控制表单，添加 FBM 选项
 	fmt.Fprint(w, `<div class="controls">
 		<form>
-			大小: <input type="number" name="size" value="`+strconv.Itoa(size)+`" min="20" max="200">
+			大小: <input type="number" name="size" value="`+strconv.Itoa(size)+`" min="20" max="512">
 			缩放: <input type="number" name="scale" value="`+fmt.Sprintf("%.1f", scale)+`" step="0.1" min="0.1" max="19">
 			阈值: <input type="number" name="threshold" value="`+fmt.Sprintf("%.2f", threshold)+`" step="0.05" min="-1" max="1">
 			<label><input type="checkbox" name="fbm" value="true" `+func() string {
@@ -383,6 +383,7 @@ func perlinGrayHandler(w http.ResponseWriter, req *http.Request) {
 // https://omo.moe/archives/394/
 // https://replay923.github.io/2018/06/04/PerlinNoise/
 // https://www.cnblogs.com/KillerAery/p/10765897.html
+// https://juejin.cn/post/7367997561510723620
 
 // todo:
 // https://indienova.com/indie-game-development/tinykeepdev-procedural-dungeon-generation-algorithm/
