@@ -83,7 +83,7 @@
 3. 计算所有联通区域，并连接他们
 
 ![image](https://github.com/wddllyy/tiledmap/blob/main/doc/IMG/Screenshot_perlin.png)
-![image](https://github.com/wddllyy/tiledmap/blob/main/doc/IMG/Screenshot_perlin_fbm.png)
+![image](https://github.com/wddllyy/tiledmap/blob/main/doc/IMG/Screenshot_perlinFBM.png)
 
 
 
