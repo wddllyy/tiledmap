@@ -90,3 +90,30 @@
 ### TODO:
 1 增加更多可控性，比如保证起点终点有平缓自然的路径
 
+***
+
+## dungeon：
+基于随机房间的方案来生成tiledmap：
+
+### 参数解释:
+"http://localhost:9999/dungeon?width=51&height=51&rooms=18&minSize=5&maxSize=9&extraPathProb=0.0"
+
+1. size 是尺寸
+2. rooms 是房间数量
+3. minSize 是最小房间尺寸
+4. maxSize 是最大房间尺寸
+5. extraPathProb 是额外路径的概率
+
+### 原理：
+1. 生成指定尺寸的初始地图，地图中随机散布房间，房间尺寸在minSize和maxSize之间（因为是随机散布，所以不能保证生成足够的房间数量）
+2. 在房间之间的空地上，随机生成路径，路径的宽度为1
+3. 计算所有联通区域（包括房间和路径），并随机连接他们
+4. 把所有死胡同堵上，降低maze部分的难度
+
+更详细的过程参考: https://journal.stuffwithstuff.com/2014/12/21/rooms-and-mazes/
+
+![image](https://github.com/wddllyy/tiledmap/blob/main/doc/IMG/Screenshot_dungeon.png)
+
+### TODO:
+1. 性能优化
+
