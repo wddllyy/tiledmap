@@ -156,4 +156,6 @@ TODO:
 1. 通过维诺图生成：http://www-cs-students.stanford.edu/~amitp/game-programming/polygon-map-generation/
 2. https://github.com/Azgaar/Fantasy-Map-Generator
 3. https://github.com/redblobgames/mapgen4
-
+4. http://www-cs-students.stanford.edu/~amitp/gameprog.html
+5. https://blog.runevision.com/2015/08/procedural-world-potentials-simulation.html
+6. https://indienova.com/indie-game-development/the-procedurally-generated-map-of-dead-cells/
