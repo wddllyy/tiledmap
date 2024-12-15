@@ -118,11 +118,35 @@
 1. 性能优化
 
 
-
 ***
 
+## WFC
+基于波函数坍塌算法生成tiledmap。
+
+### 参数解释:
+"http://localhost:9999/wfc?width=51&height=51"
+
+1. size 是尺寸
+
+### 原理:
+波函数坍塌(Wave Function Collapse)算法是一种基于约束的程序化生成算法。它的基本思想是:
+
+1. 将输出空间划分为网格，每个格子初始可以是任意可能的图案
+2. 观察样本中的局部模式，提取约束规则
+3. 迭代地"坍塌"每个格子的可能性,直到所有格子都确定下来:
+   - 选择熵最小(可能性最少)的格子
+   - 随机选择一种可能的图案
+   - 根据约束规则传播影响,更新相邻格子的可能性
+
+这个算法可以生成与样本风格相似但又不完全相同的图案。
+参考:
+https://github.com/mxgmn/WaveFunctionCollapse
+https://www.procjam.com/tutorials/wfc/
+
+![image](https://github.com/wddllyy/tiledmap/blob/main/doc/IMG/Screenshot_WFC.png)
+
+
 TODO:
-1. 波函数坍塌：https://www.procjam.com/tutorials/wfc/
-2. 通过维诺图生成：http://www-cs-students.stanford.edu/~amitp/game-programming/polygon-map-generation/
+1. 通过维诺图生成：http://www-cs-students.stanford.edu/~amitp/game-programming/polygon-map-generation/
 
 
