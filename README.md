@@ -117,3 +117,12 @@
 ### TODO:
 1. 性能优化
 
+
+
+***
+
+TODO:
+1. 波函数坍塌：https://www.procjam.com/tutorials/wfc/
+2. 通过维诺图生成：http://www-cs-students.stanford.edu/~amitp/game-programming/polygon-map-generation/
+
+

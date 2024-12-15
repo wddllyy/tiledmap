@@ -17,5 +17,6 @@ func main() {
 	http.HandleFunc("/perlin", perlinHandler)
 	http.HandleFunc("/perlingray", perlinGrayHandler)
 	http.HandleFunc("/dungeon", dungeonHandler)
+	http.HandleFunc("/wfc", wfcHandler)
 	log.Fatal(http.ListenAndServe(":9999", nil))
 }
