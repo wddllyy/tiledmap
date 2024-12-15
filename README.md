@@ -146,6 +146,7 @@
 https://github.com/mxgmn/WaveFunctionCollapse
 https://www.procjam.com/tutorials/wfc/
 https://cloud.tencent.com/developer/article/1379330
+https://www.bilibili.com/video/BV1nR4y1v715
 
 
 ![image](https://github.com/wddllyy/tiledmap/blob/main/doc/IMG/Screenshot_WFC.png)
