@@ -136,17 +136,23 @@
 3. 迭代地"坍塌"每个格子的可能性,直到所有格子都确定下来:
    - 选择熵最小(可能性最少)的格子
    - 随机选择一种可能的图案
+   - 
    - 根据约束规则传播影响,更新相邻格子的可能性
 
 这个算法可以生成与样本风格相似但又不完全相同的图案。
+
+
 参考:
 https://github.com/mxgmn/WaveFunctionCollapse
 https://www.procjam.com/tutorials/wfc/
+https://cloud.tencent.com/developer/article/1379330
+
 
 ![image](https://github.com/wddllyy/tiledmap/blob/main/doc/IMG/Screenshot_WFC.png)
 
 
 TODO:
 1. 通过维诺图生成：http://www-cs-students.stanford.edu/~amitp/game-programming/polygon-map-generation/
-
+2. https://github.com/Azgaar/Fantasy-Map-Generator
+3. https://github.com/redblobgames/mapgen4
 
