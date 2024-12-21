@@ -1,5 +1,5 @@
 // wfc.go
-package main
+package tiledmap
 
 import (
 	"fmt"
@@ -233,7 +233,7 @@ const htmlFooter = `
     </div>
 `
 
-func wfcHandler(w http.ResponseWriter, r *http.Request) {
+func WFCHandler(w http.ResponseWriter, r *http.Request) {
 	// 从URL参数获取宽度和高度
 	width, err := strconv.Atoi(r.URL.Query().Get("width"))
 	if err != nil || width <= 0 {

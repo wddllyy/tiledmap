@@ -1,4 +1,4 @@
-package main
+package tiledmap
 
 import (
 	"fmt"
@@ -340,7 +340,7 @@ const dungeonCSS = `
     }
 </style>`
 
-func dungeonHandler(w http.ResponseWriter, r *http.Request) {
+func DungeonHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, dungeonCSS)
 
 	// 解析参数，确保为奇数

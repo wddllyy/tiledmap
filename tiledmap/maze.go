@@ -1,4 +1,4 @@
-package main
+package tiledmap
 
 import (
 	"fmt"
@@ -73,7 +73,7 @@ func parseParams(req *http.Request) (size int, turnProb, accRatio, erosionRatio 
 	return
 }
 
-func mazeHandler(w http.ResponseWriter, req *http.Request) {
+func MazeHandler(w http.ResponseWriter, req *http.Request) {
 	size, turnProb, accRatio, erosionRatio := parseParams(req)
 
 	fmt.Fprint(w, htmlTemplate)

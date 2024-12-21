@@ -1,4 +1,4 @@
-package main
+package tiledmap
 
 import (
 	"fmt"
@@ -149,7 +149,7 @@ const perlinCSS = `
     }
 </style>`
 
-func perlinHandler(w http.ResponseWriter, req *http.Request) {
+func PerlinHandler(w http.ResponseWriter, req *http.Request) {
 
 	fmt.Fprint(w, perlinCSS)
 
@@ -269,7 +269,7 @@ func (p *PerlinNoise) FBM(x, y float64, octaves int, lacunarity, persistence flo
 	return total / maxValue // 归一化结果
 }
 
-func perlinGrayHandler(w http.ResponseWriter, req *http.Request) {
+func PerlinGrayHandler(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprint(w, perlinGrayCSS)
 
 	// 解析参数

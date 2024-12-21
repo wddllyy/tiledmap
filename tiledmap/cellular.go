@@ -1,4 +1,4 @@
-package main
+package tiledmap
 
 import (
 	"fmt"
@@ -112,7 +112,7 @@ const cellularCSS = `
     }
 </style>`
 
-func cellularHandler(w http.ResponseWriter, req *http.Request) {
+func CellularHandler(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprint(w, cellularCSS)
 	fmt.Fprint(w, "<div class='container'>")
 
@@ -341,7 +341,7 @@ func connectRegionsByBFS(maze [][]int) {
 
 	// 当还有多个区域时，继续连接
 	for len(regionList) > 1 {
-		// 对当前第一��区域进行BFS寻路
+		// 对当前第一区域进行BFS寻路
 		region1 := regionList[0]
 		path := bfsToNearestRegion(maze, regions, region1)
 
