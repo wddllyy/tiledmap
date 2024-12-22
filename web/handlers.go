@@ -154,6 +154,7 @@ func renderMazeWithPath(w http.ResponseWriter, maze [][]int, path [][]bool, show
 			if maze[y][x] == 0 {
 				cellClass = "floor"
 			}
+			//fmt.Println(y, x)
 			if showPath && path[y][x] {
 				cellClass = "path"
 			}
