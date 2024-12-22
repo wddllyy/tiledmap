@@ -84,6 +84,8 @@ func FindPathBestFirst(maze [][]int, start, end [2]int) PathFindResult {
 
 		// 检查相邻节点
 		for _, dir := range dirs {
+			res.Check++
+
 			nextPos := [2]int{current.pos[0] + dir[0], current.pos[1] + dir[1]}
 
 			// 检查边界和是否可通行

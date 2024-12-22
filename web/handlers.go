@@ -130,9 +130,10 @@ func renderMazeWithTitle(w http.ResponseWriter, maze [][]int, title string) {
 	fmt.Fprint(w, "\n</div>\n")
 }
 
-// 渲染带标题的迷宫
-func renderMazePathWithTitle(w http.ResponseWriter, maze [][]int, path [][]bool, title string) {
+// 渲染带标题和信息的迷宫
+func renderMazePathWithTitle(w http.ResponseWriter, maze [][]int, path [][]bool, title string, info string) {
 	fmt.Fprintf(w, "\n<div class='maze-box'><h3>%s</h3>\n", title)
+	fmt.Fprintf(w, "\n<p style='font-size: 12px; margin-top: -15px; color: #666;'>%s</p>\n", info)
 	renderMazeWithPath(w, maze, path, true)
 	fmt.Fprint(w, "\n</div>\n")
 }

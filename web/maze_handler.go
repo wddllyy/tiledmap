@@ -73,10 +73,10 @@ func mazeHandler(w http.ResponseWriter, req *http.Request) {
 	path := tiledmap.FindPath(maze)
 
 	// 第一个画布：原始迷宫
-	renderMazePathWithTitle(w, maze, path, "原始迷宫")
+	renderMazePathWithTitle(w, maze, path, "原始迷宫", "")
 
 	tiledmap.AccuMaze(maze, path, accRatio)
-	renderMazePathWithTitle(w, maze, path, "堆积后") // 第二个画布：消除断头路后
+	renderMazePathWithTitle(w, maze, path, "堆积后", "") // 第二个画布：消除断头路后
 
 	tiledmap.ErosionMaze(maze, erosionRatio)
 	renderMazeWithTitle(w, maze, "侵蚀后") // 第三个画布：侵蚀后

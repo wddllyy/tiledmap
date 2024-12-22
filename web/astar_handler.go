@@ -18,7 +18,7 @@ func astarHandler(w http.ResponseWriter, req *http.Request) {
 <div class="dungeon-container">
 	<div class="dungeon-controls">
 		<form>
-			尺寸: <input type="number" name="size" value="%d" min="13" max="99" step="2">
+			尺寸: <input type="number" name="size" value="%d" min="5" max="99" step="2">
 			转弯概率: <input type="number" name="turn" value="%0.1f" step="0.1" min="0" max="1">
 			堆积系数: <input type="number" name="acc" value="%0.1f" step="0.1" min="0" max="1">
 			侵蚀系数: <input type="number" name="erosion" value="%0.1f" step="0.1" min="0" max="1">
@@ -54,12 +54,16 @@ func astarHandler(w http.ResponseWriter, req *http.Request) {
 	pathFindRes = pathfind.FindPathBestFirst(maze, start, end)
 	renderPathWithTitle(w, maze, pathFindRes, "BestFirst寻路结果") // 渲染带路径的迷宫
 
+	// 使用 bestfirst 寻路
+	pathFindRes = pathfind.FindPathJPS(maze, start, end)
+	renderPathWithTitle(w, maze, pathFindRes, "JPS寻路结果") // 渲染带路径的迷宫
+
 	fmt.Fprint(w, "\n</div></div></body></html>")
 }
 
 func renderPathWithTitle(w http.ResponseWriter, maze [][]int, res pathfind.PathFindResult, title string) {
 
-	title += fmt.Sprintf(" (成本: %d, 长度: %d)", res.Cost, len(res.Path))
+	info := fmt.Sprintf(" (成本:%d,检查:%d,长度:%d)", res.Cost, res.Check, len(res.Path))
 
 	path := res.Path
 	// 将路径转换为map以便快速查找
@@ -77,5 +81,5 @@ func renderPathWithTitle(w http.ResponseWriter, maze [][]int, res pathfind.PathF
 		pathArr[p[0]][p[1]] = true
 	}
 
-	renderMazePathWithTitle(w, maze, pathArr, title)
+	renderMazePathWithTitle(w, maze, pathArr, title, info)
 }
