@@ -2,10 +2,7 @@
 package tiledmap
 
 import (
-	"fmt"
 	"math/rand"
-	"net/http"
-	"strconv"
 )
 
 // Tile类型常量
@@ -187,91 +184,4 @@ func (w *WFC) canBeNeighbors(tile1, tile2 int) bool {
 		}
 	}
 	return false
-}
-
-// HTML模板常量
-const WFCHtmlTemplate = `
-    <style>
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            padding: 20px;
-        }
-        .controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        table {
-            border-collapse: collapse;
-        }
-        td {
-            width: 20px;
-            height: 20px;
-            padding: 0;
-        }
-        .grass { background-color: #228B22; }
-        .water { background-color: #4169E1; }
-        .sand { background-color: #EED6AF; }
-        .forest { background-color: #1B6B1B; }
-        .darkwater { background-color: #4169E1; }
-    </style>
-<div class="container">
-    <div class="controls">
-        <form>
-            宽度: <input type="number" name="width" value="%d" min="1" max="100">
-            高度: <input type="number" name="height" value="%d" min="1" max="100">
-            <input type="submit" value="生成">
-        </form>
-    </div>
-`
-
-const htmlFooter = `
-    </table>
-    </div>
-`
-
-func WFCHandler(w http.ResponseWriter, r *http.Request) {
-	// 从URL参数获取宽度和高度
-	width, err := strconv.Atoi(r.URL.Query().Get("width"))
-	if err != nil || width <= 0 {
-		width = 32 // 默认值
-	}
-	height, err := strconv.Atoi(r.URL.Query().Get("height"))
-	if err != nil || height <= 0 {
-		height = 32 // 默认值
-	}
-
-	wfc := NewWFC(width, height)
-	tileMap := wfc.Generate()
-
-	// HTML头部
-	fmt.Fprintf(w, WFCHtmlTemplate, width, height)
-
-	// 生成表格
-	fmt.Fprintf(w, "<table>")
-	for y := 0; y < height; y++ {
-		fmt.Fprintf(w, "<tr>")
-		for x := 0; x < width; x++ {
-			var class string
-			switch tileMap[y][x] {
-			case TILE_GRASS:
-				class = "grass"
-			case TILE_WATER:
-				class = "water"
-			case TILE_SAND:
-				class = "sand"
-			case TILE_FOREST:
-				class = "forest"
-			case TILE_DARKWATER:
-				class = "darkwater"
-			}
-			fmt.Fprintf(w, `<td class="%s"></td>`, class)
-		}
-		fmt.Fprintf(w, "</tr>")
-	}
-
-	fmt.Fprint(w, htmlFooter)
 }

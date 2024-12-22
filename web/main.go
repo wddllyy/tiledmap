@@ -3,8 +3,6 @@ package main
 import (
 	"log"
 	"net/http"
-
-	"mazemap/tiledmap"
 )
 
 func main() {
@@ -16,6 +14,6 @@ func main() {
 	http.HandleFunc("/perlin", perlinHandler)
 	http.HandleFunc("/perlingray", perlinGrayHandler)
 	http.HandleFunc("/dungeon", dungeonHandler)
-	http.HandleFunc("/wfc", tiledmap.WFCHandler)
+	http.HandleFunc("/wfc", wfcHandler)
 	log.Fatal(http.ListenAndServe(":9999", nil))
 }
