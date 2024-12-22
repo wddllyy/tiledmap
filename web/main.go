@@ -15,7 +15,7 @@ func main() {
 	http.HandleFunc("/cellular", cellularHandler)
 	http.HandleFunc("/perlin", perlinHandler)
 	http.HandleFunc("/perlingray", perlinGrayHandler)
-	http.HandleFunc("/dungeon", tiledmap.DungeonHandler)
+	http.HandleFunc("/dungeon", dungeonHandler)
 	http.HandleFunc("/wfc", tiledmap.WFCHandler)
 	log.Fatal(http.ListenAndServe(":9999", nil))
 }
