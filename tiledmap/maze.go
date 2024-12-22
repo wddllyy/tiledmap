@@ -1,114 +1,14 @@
 package tiledmap
 
 import (
-	"fmt"
 	"math/rand"
-	"net/http"
-	"strconv"
 )
 
 type Point struct {
 	x, y int
 }
 
-const (
-	defaultSize         = 19
-	defaultTurnProb     = 0.4
-	defaultAccRatio     = 0.7
-	defaultErosionRatio = 0.5
-	maxSize             = 100
-)
-
-const htmlTemplate = `
-<html>
-<head>
-    <style>
-        .container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(2, auto);
-            gap: 10px;
-            padding: 10px;
-        }
-        .maze-box {
-            border: 1px solid #ccc;
-            padding: 10px;
-        }
-    </style>
-</head>
-<body>
-<div class="container">
-`
-
-func parseParams(req *http.Request) (size int, turnProb, accRatio, erosionRatio float64) {
-	size = defaultSize
-	turnProb = defaultTurnProb
-	accRatio = defaultAccRatio
-	erosionRatio = defaultErosionRatio
-
-	if sizeStr := req.URL.Query().Get("size"); sizeStr != "" {
-		if s, err := strconv.Atoi(sizeStr); err == nil && s > 0 && s < maxSize {
-			size = s
-		}
-	}
-
-	if turnStr := req.URL.Query().Get("turn"); turnStr != "" {
-		if t, err := strconv.ParseFloat(turnStr, 64); err == nil && t >= 0 && t <= 1 {
-			turnProb = t
-		}
-	}
-
-	if accStr := req.URL.Query().Get("acc"); accStr != "" {
-		if acc, err := strconv.ParseFloat(accStr, 64); err == nil && acc >= 0 && acc <= 1 {
-			accRatio = (acc)
-		}
-	}
-
-	if erosionStr := req.URL.Query().Get("erosion"); erosionStr != "" {
-		if e, err := strconv.ParseFloat(erosionStr, 64); err == nil && e >= 0 && e <= 1 {
-			erosionRatio = e
-		}
-	}
-
-	return
-}
-
-func MazeHandler(w http.ResponseWriter, req *http.Request) {
-	size, turnProb, accRatio, erosionRatio := parseParams(req)
-
-	fmt.Fprint(w, htmlTemplate)
-
-	// 生成迷宫和寻找路径
-	maze := generateMaze(size, turnProb)
-	path := findPath(maze)
-
-	// 第一个画布：原始迷宫
-	fmt.Fprint(w, "<div class='maze-box'><h3>原始迷宫</h3>")
-	renderMaze(w, maze, path, true)
-	fmt.Fprint(w, "</div>")
-
-	// 第二个画布：消除断头路后
-	fmt.Fprint(w, "<div class='maze-box'><h3>堆积后</h3>")
-	accuMaze(maze, path, accRatio)
-	renderMaze(w, maze, path, true)
-	fmt.Fprint(w, "</div>")
-
-	// 第三个画布：侵蚀后
-	fmt.Fprint(w, "<div class='maze-box'><h3>侵蚀后</h3>")
-	erosionMaze(maze, erosionRatio)
-	renderMaze(w, maze, path, false)
-	fmt.Fprint(w, "</div>")
-
-	// 第四、五、六个画布：空白位置
-	fmt.Fprint(w, "<div class='maze-box'></div>")
-	fmt.Fprint(w, "<div class='maze-box'></div>")
-	fmt.Fprint(w, "<div class='maze-box'></div>")
-
-	// 结束 HTML
-	fmt.Fprint(w, "</div></body></html>")
-}
-
-func generateMaze(size int, turnProb float64) [][]int {
+func GenerateMaze(size int, turnProb float64) [][]int {
 	maze := make([][]int, size)
 	for i := range maze {
 		maze[i] = make([]int, size)
@@ -161,7 +61,7 @@ func generateMaze(size int, turnProb float64) [][]int {
 	return maze
 }
 
-func accuMaze(maze [][]int, path [][]bool, accPrecent float64) int {
+func AccuMaze(maze [][]int, path [][]bool, accPrecent float64) int {
 	size := len(maze)
 	dirs := []Point{{0, 1}, {1, 0}, {0, -1}, {-1, 0}}
 	totalCount := 0
@@ -215,7 +115,7 @@ func accuMaze(maze [][]int, path [][]bool, accPrecent float64) int {
 	return totalCount
 }
 
-func erosionMaze(maze [][]int, erosionPercent float64) int {
+func ErosionMaze(maze [][]int, erosionPercent float64) int {
 	size := len(maze)
 	dirs := []Point{{0, 1}, {1, 0}, {0, -1}, {-1, 0}}
 
@@ -382,7 +282,7 @@ func countDeadEnds(maze [][]int, size int, path [][]bool) int {
 	return count
 }
 
-func findPath(maze [][]int) [][]bool {
+func FindPath(maze [][]int) [][]bool {
 	size := len(maze)
 	path := make([][]bool, size)
 	for i := range path {
@@ -433,40 +333,4 @@ func findPath(maze [][]int) [][]bool {
 	}
 
 	return path
-}
-
-func renderMaze(w http.ResponseWriter, maze [][]int, path [][]bool, showPath bool) {
-	size := len(maze)
-	w.Header().Set("Content-Type", "text/html")
-	fmt.Fprintf(w, "<pre style='line-height:1;font-family:monospace'>")
-
-	for i := 0; i < size+2; i++ {
-		fmt.Fprintf(w, "&#9608;")
-	}
-	fmt.Fprintf(w, "\n")
-
-	for i := 0; i < size; i++ {
-		fmt.Fprintf(w, "&#9608;")
-		for j := 0; j < size; j++ {
-			if maze[i][j] == 1 {
-				fmt.Fprintf(w, "&#9608;")
-			} else {
-				if i == 0 && j == 0 {
-					fmt.Fprintf(w, "S ")
-				} else if i == size-1 && j == size-1 {
-					fmt.Fprintf(w, " E")
-				} else if showPath && path[i][j] {
-					fmt.Fprintf(w, "##")
-				} else {
-					fmt.Fprintf(w, "  ")
-				}
-			}
-		}
-		fmt.Fprintf(w, "&#9608;\n")
-	}
-
-	for i := 0; i < size+2; i++ {
-		fmt.Fprintf(w, "&#9608;")
-	}
-	fmt.Fprintf(w, "\n</pre>")
 }

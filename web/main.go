@@ -11,7 +11,7 @@ func main() {
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/hello", helloHandler)
 	http.HandleFunc("/test/", testHandler)
-	http.HandleFunc("/maze", tiledmap.MazeHandler)
+	http.HandleFunc("/maze", mazeHandler)
 	http.HandleFunc("/cellular", tiledmap.CellularHandler)
 	http.HandleFunc("/perlin", tiledmap.PerlinHandler)
 	http.HandleFunc("/perlingray", tiledmap.PerlinGrayHandler)

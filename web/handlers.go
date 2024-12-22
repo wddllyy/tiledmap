@@ -69,3 +69,44 @@ func testHandler(w http.ResponseWriter, req *http.Request) {
 	}
 	fmt.Fprintf(w, "Reversed path: %s\n", string(runes))
 }
+
+const RenderCSS = `
+<style>
+    .dungeon-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        padding: 20px;
+    }
+    .dungeon-controls {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    .dungeon-grid {
+        display: grid;
+        gap: 0;
+        position: relative;
+    }
+    .dungeon-cell {
+        width: 8px;
+        height: 8px;
+        display: inline-block;
+    }
+    .wall { background-color: #666; }
+    .floor { background-color: #fff; }
+	.path { background-color: #339966; }
+	.grass { background-color: #228B22; }
+    .water { background-color: #4169E1; }
+    .sand { background-color: #EED6AF; }
+    .forest { background-color: #1B6B1B; }
+    .darkwater { background-color: #4169E1; }
+    .room-number {
+        position: absolute;
+        color: #f00;
+        font-size: 12px;
+        font-weight: bold;
+        z-index: 1;
+    }
+</style>`
