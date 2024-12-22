@@ -225,10 +225,10 @@ func PerlinHandler(w http.ResponseWriter, req *http.Request) {
 	// 生成并渲染迷宫
 	fmt.Fprint(w, "<div class='container'>")
 
-	renderMazeWithTitle(w, maze, "柏林噪声地图")
+	//renderMazeWithTitle(w, maze, "柏林噪声地图")
 
-	connectRegionsByBFS(maze)
-	renderMazeWithTitle(w, maze, "BFS连接所有区域")
+	ConnectRegionsByBFS(maze)
+	//renderMazeWithTitle(w, maze, "BFS连接所有区域")
 
 	fmt.Fprint(w, "</div>")
 }

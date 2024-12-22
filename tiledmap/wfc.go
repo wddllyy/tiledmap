@@ -190,7 +190,7 @@ func (w *WFC) canBeNeighbors(tile1, tile2 int) bool {
 }
 
 // HTML模板常量
-const wfcHtmlTemplate = `
+const WFCHtmlTemplate = `
     <style>
         .container {
             display: flex;
@@ -248,7 +248,7 @@ func WFCHandler(w http.ResponseWriter, r *http.Request) {
 	tileMap := wfc.Generate()
 
 	// HTML头部
-	fmt.Fprintf(w, wfcHtmlTemplate, width, height)
+	fmt.Fprintf(w, WFCHtmlTemplate, width, height)
 
 	// 生成表格
 	fmt.Fprintf(w, "<table>")
