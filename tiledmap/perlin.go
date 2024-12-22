@@ -1,11 +1,8 @@
 package tiledmap
 
 import (
-	"fmt"
 	"math"
 	"math/rand"
-	"net/http"
-	"strconv"
 )
 
 type PerlinNoise struct {
@@ -95,7 +92,12 @@ func (p *PerlinNoise) lerp(a, b, t float64) float64 {
 }
 
 // 生成柏林噪声迷宫
-func GeneratePerlinMaze(size int, scale float64, threshold float64) [][]int {
+func GeneratePerlinMaze(size int, scale float64, threshold float64, useFBM bool) [][]int {
+
+	octaves := 4
+	lacunarity := 2.0
+	persistence := 0.5
+
 	perlin := NewPerlinNoise(rand.Int63())
 	maze := make([][]int, size)
 	for i := range maze {
@@ -107,7 +109,12 @@ func GeneratePerlinMaze(size int, scale float64, threshold float64) [][]int {
 			// 生成柏林噪声值
 			nx := float64(x) / float64(size) * scale
 			ny := float64(y) / float64(size) * scale
-			value := perlin.Noise2D(nx, ny)
+			var value float64
+			if useFBM {
+				value = perlin.FBM(nx, ny, octaves, lacunarity, persistence)
+			} else {
+				value = perlin.Noise2D(nx, ny)
+			}
 			//fmt.Println("--", nx, ny, value)
 			// 根据阈值确定是墙还是路
 			if value > threshold {
@@ -125,133 +132,6 @@ func GeneratePerlinMaze(size int, scale float64, threshold float64) [][]int {
 	return maze
 }
 
-const perlinCSS = `
-<style>
-    .container {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 20px;
-        padding: 20px;
-        justify-content: center;
-    }
-    .controls {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
-        width: 100%;
-        justify-content: center;
-    }
-    .maze-box {
-        border: 1px solid #ccc;
-        padding: 10px;
-        flex-shrink: 0;
-    }
-</style>`
-
-func PerlinHandler(w http.ResponseWriter, req *http.Request) {
-
-	fmt.Fprint(w, perlinCSS)
-
-	// 解析参数
-	size := 50
-	if s := req.URL.Query().Get("size"); s != "" {
-		if val, err := strconv.Atoi(s); err == nil && val > 0 && val <= 512 {
-			size = val
-		}
-	}
-
-	scale := 5.0
-	if s := req.URL.Query().Get("scale"); s != "" {
-		if val, err := strconv.ParseFloat(s, 64); err == nil && val > 0 {
-			scale = val
-		}
-	}
-
-	threshold := 0.0
-	if t := req.URL.Query().Get("threshold"); t != "" {
-		if val, err := strconv.ParseFloat(t, 64); err == nil {
-			threshold = val
-		}
-	}
-
-	// 添加 FBM 参数
-	useFBM := req.URL.Query().Get("fbm") == "true"
-	octaves := 4
-	lacunarity := 2.0
-	persistence := 0.5
-
-	// 修改控制表单，添加 FBM 选项
-	fmt.Fprint(w, `<div class="controls">
-		<form>
-			大小: <input type="number" name="size" value="`+strconv.Itoa(size)+`" min="20" max="512">
-			缩放: <input type="number" name="scale" value="`+fmt.Sprintf("%.1f", scale)+`" step="0.1" min="0.1" max="19">
-			阈值: <input type="number" name="threshold" value="`+fmt.Sprintf("%.2f", threshold)+`" step="0.05" min="-1" max="1">
-			<label><input type="checkbox" name="fbm" value="true" `+func() string {
-		if useFBM {
-			return "checked"
-		}
-		return ""
-	}()+`> 使用FBM</label>
-			<input type="submit" value="生成">
-		</form>
-	</div>`)
-
-	// 修改生成迷宫的部分
-	maze := make([][]int, size)
-	for i := range maze {
-		maze[i] = make([]int, size)
-	}
-
-	perlin := NewPerlinNoise(rand.Int63())
-	for y := 0; y < size; y++ {
-		for x := 0; x < size; x++ {
-			nx := float64(x) / float64(size) * scale
-			ny := float64(y) / float64(size) * scale
-			var value float64
-			if useFBM {
-				value = perlin.FBM(nx, ny, octaves, lacunarity, persistence)
-			} else {
-				value = perlin.Noise2D(nx, ny)
-			}
-			if value > threshold {
-				maze[y][x] = 1 // 墙
-			} else {
-				maze[y][x] = 0 // 路
-			}
-		}
-	}
-
-	// 生成并渲染迷宫
-	fmt.Fprint(w, "<div class='container'>")
-
-	//renderMazeWithTitle(w, maze, "柏林噪声地图")
-
-	ConnectRegionsByBFS(maze)
-	//renderMazeWithTitle(w, maze, "BFS连接所有区域")
-
-	fmt.Fprint(w, "</div>")
-}
-
-const perlinGrayCSS = `
-<style>
-    .gray-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-        padding: 20px;
-    }
-    .gray-controls {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-    canvas {
-        border: 1px solid #ccc;
-    }
-</style>`
-
 // 添加 FBM 实现函数
 func (p *PerlinNoise) FBM(x, y float64, octaves int, lacunarity, persistence float64) float64 {
 	total := 0.0
@@ -267,112 +147,6 @@ func (p *PerlinNoise) FBM(x, y float64, octaves int, lacunarity, persistence flo
 	}
 
 	return total / maxValue // 归一化结果
-}
-
-func PerlinGrayHandler(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprint(w, perlinGrayCSS)
-
-	// 解析参数
-	size := 256
-	if s := req.URL.Query().Get("size"); s != "" {
-		if val, err := strconv.Atoi(s); err == nil && val > 0 && val <= 1024 {
-			size = val
-		}
-	}
-
-	scale := 5.0
-	if s := req.URL.Query().Get("scale"); s != "" {
-		if val, err := strconv.ParseFloat(s, 64); err == nil && val > 0 {
-			scale = val
-		}
-	}
-
-	// 添加 FBM 参数
-	useFBM := req.URL.Query().Get("fbm") == "true"
-	octaves := 4
-	lacunarity := 2.0
-	persistence := 0.5
-
-	// 修改表单，添加 FBM 选项
-	fmt.Fprint(w, `<div class="gray-container" style="flex-direction: row; justify-content: center;">
-		<div class="gray-controls" style="position: absolute; top: 20px;">
-			<form>
-				尺寸: <input type="number" name="size" value="`+strconv.Itoa(size)+`" min="64" max="1024">
-				缩放: <input type="number" name="scale" value="`+fmt.Sprintf("%.1f", scale)+`" step="0.1" min="0.1" max="20">
-				<label><input type="checkbox" name="fbm" value="true" `+func() string {
-		if useFBM {
-			return "checked"
-		}
-		return ""
-	}()+`> 使用FBM</label>
-				<input type="submit" value="生成">
-			</form>
-		</div>`)
-
-	// 生成三个Canvas
-	//scales := []float64{scale / 4, scale / 2, scale, scale * 2, scale * 4}
-	scales := []float64{scale}
-	for i, currentScale := range scales {
-		fmt.Fprintf(w, `
-			<div style="margin: 60px 10px 0 10px; text-align: center;">
-				<div style="margin-bottom: 10px;">Scale: %.1f</div>
-				<canvas id="perlinCanvas%d" width="%d" height="%d"></canvas>
-			</div>`, currentScale, i, size, size)
-	}
-
-	// 生成JavaScript代码
-	fmt.Fprint(w, "<script>")
-
-	// 为每个Canvas生成和渲染噪声数据
-	perlin := NewPerlinNoise(rand.Int63())
-	for i, currentScale := range scales {
-		fmt.Fprintf(w, `
-			{
-				const canvas = document.getElementById('perlinCanvas%d');
-				const ctx = canvas.getContext('2d');
-				ctx.imageSmoothingEnabled = false; // 禁用平滑处理
-				const pixelSize = 1; // 设置每个像素的实际大小
-				canvas.width = %d * pixelSize;
-				canvas.height = %d * pixelSize;
-				const imageData = ctx.createImageData(canvas.width, canvas.height);
-				const data = imageData.data;
-				const noiseData = [`, i, size, size)
-
-		for y := 0; y < size; y++ {
-			for x := 0; x < size; x++ {
-				nx := float64(x) / float64(size) * currentScale
-				ny := float64(y) / float64(size) * currentScale
-				var value float64
-				if useFBM {
-					value = (perlin.FBM(nx, ny, octaves, lacunarity, persistence) + 1) / 2
-				} else {
-					value = (perlin.Noise2D(nx, ny) + 1) / 2
-				}
-				fmt.Fprintf(w, "%.4f,", value)
-			}
-		}
-
-		fmt.Fprintf(w, `];
-				for (let y = 0; y < %d; y++) {
-					for (let x = 0; x < %d; x++) {
-						const value = Math.floor(noiseData[y * %d + x] * 255);
-						// 填充 8x8 的像素块
-						for (let py = 0; py < pixelSize; py++) {
-							for (let px = 0; px < pixelSize; px++) {
-								const idx = ((y * pixelSize + py) * (%d * pixelSize) + (x * pixelSize + px)) * 4;
-								data[idx] = value;     // R
-								data[idx + 1] = value; // G
-								data[idx + 2] = value; // B
-								data[idx + 3] = 255;   // A
-							}
-						}
-					}
-				}
-				ctx.putImageData(imageData, 0, 0);
-			}`, size, size, size, size)
-	}
-
-	fmt.Fprint(w, "</script></div>")
 }
 
 // http://kitfox.com/projects/perlinNoiseMaker/
