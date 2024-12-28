@@ -10,12 +10,13 @@ import (
 )
 
 func cellularHandler(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprint(w, RenderCSS)
+	printHtmlHead(w, "细胞自动机")
+
 	params := parseCellularParams(req)
 
 	fmt.Fprintf(w, `
-<div class="dungeon-container">
-	<div class="dungeon-controls">
+<div class="all-container">
+	<div class="all-controls">
 		<form>
 			尺寸: <input type="number" name="size" value="%d" min="13" max="1000" step="2">
 			障碍物率: <input type="number" name="prob" value="%0.1f" step="0.1" min="0" max="1">

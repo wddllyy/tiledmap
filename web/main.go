@@ -16,5 +16,6 @@ func main() {
 	http.HandleFunc("/dungeon", dungeonHandler)
 	http.HandleFunc("/wfc", wfcHandler)
 	http.HandleFunc("/astar", astarHandler)
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("web/static"))))
 	log.Fatal(http.ListenAndServe(":9999", nil))
 }

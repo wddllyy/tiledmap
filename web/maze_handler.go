@@ -50,14 +50,14 @@ func parseMazeParams(req *http.Request) (size int, turnProb, accRatio, erosionRa
 }
 
 func mazeHandler(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprint(w, RenderCSS)
+	printHtmlHead(w, "迷宫堆积")
 
 	size, turnProb, accRatio, erosionRatio := parseMazeParams(req)
 
 	// 控制表单
 	fmt.Fprintf(w, `
-<div class="dungeon-container">
-	<div class="dungeon-controls">
+<div class="all-container">
+	<div class="all-controls">
 		<form>
 			尺寸: <input type="number" name="size" value="%d" min="13" max="99" step="2">
 			转弯概率: <input type="number" name="turn" value="%0.1f" step="0.1" min="0" max="1">

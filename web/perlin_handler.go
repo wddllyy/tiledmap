@@ -10,7 +10,7 @@ import (
 )
 
 func perlinHandler(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprint(w, RenderCSS)
+	printHtmlHead(w, "柏林噪声")
 
 	// 解析参数
 	size := 50
@@ -39,8 +39,8 @@ func perlinHandler(w http.ResponseWriter, req *http.Request) {
 
 	// 修改控制表单，添加 FBM 选项
 	fmt.Fprintf(w, `
-<div class="dungeon-container">
-	<div class="dungeon-controls">
+<div class="all-container">
+	<div class="all-controls">
 		<form>
 			大小: <input type="number" name="size" value="%d" min="20" max="512">
 			缩放: <input type="number" name="scale" value="%.1f" step="0.1" min="0.1" max="19">
@@ -70,7 +70,7 @@ func perlinHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 func perlinGrayHandler(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprint(w, RenderCSS)
+	fmt.Fprint(w, `<link rel="stylesheet" href="/static/style.css">`)
 
 	// 解析参数
 	size := 256

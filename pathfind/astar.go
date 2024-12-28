@@ -16,9 +16,10 @@ type Node struct {
 }
 
 type PathFindResult struct {
-	Path  [][2]int
-	Cost  int
-	Check int
+	Path       [][2]int
+	Cost       int
+	Check      int
+	StepRecord MazeStepRecord
 }
 
 // PriorityQueue 实现堆接口
@@ -80,9 +81,20 @@ func FindPathAStar(maze [][]int, start, end [2]int) PathFindResult {
 
 	var current *Node
 	var res PathFindResult
+
+	res.StepRecord = MazeStepRecord{
+		Steps: make([]MazeStep, 0),
+	}
+
 	// 主循环
 	for openList.Len() > 0 {
 		current = heap.Pop(openList).(*Node)
+		// 记录这一步
+		res.StepRecord.Steps = append(res.StepRecord.Steps, MazeStep{
+			Pos:  current.pos,
+			Type: 2, // 标记为已检查
+			Dir:  [2]int{0, 0},
+		})
 
 		// 如果到达终点
 		if current.pos == end {

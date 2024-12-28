@@ -9,7 +9,8 @@ import (
 )
 
 func dungeonHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, RenderCSS)
+
+	printHtmlHead(w, "迷宫生成算法")
 
 	// 解析参数，确保为奇数
 	width := 51 // 默认值改为奇数
@@ -68,8 +69,8 @@ func dungeonHandler(w http.ResponseWriter, r *http.Request) {
 
 	// 控制表单
 	fmt.Fprintf(w, `
-<div class="dungeon-container">
-	<div class="dungeon-controls">
+<div class="all-container">
+	<div class="all-controls">
 		<form>
 			宽度: <input type="number" name="width" value="%d" min="13" max="99" step="2">
 			高度: <input type="number" name="height" value="%d" min="13" max="99" step="2">
@@ -109,7 +110,7 @@ func renderDungeonWithTitle(w http.ResponseWriter, d *tiledmap.Dungeon, title st
 	fmt.Fprintf(w, `
 		<div>
 			<h3 style="text-align: center">%s</h3>
-			<div class="dungeon-grid" style="grid-template-columns: repeat(%d, 8px);">`, title, d.Width)
+			<div class="wfc-grid" style="grid-template-columns: repeat(%d, 8px);">`, title, d.Width)
 	renderDungeon(w, d)
 	fmt.Fprint(w, "</div></div>")
 }
@@ -122,7 +123,7 @@ func renderDungeon(w http.ResponseWriter, d *tiledmap.Dungeon) {
 			if d.Tiles[y][x] == 0 {
 				cellClass = "floor"
 			}
-			fmt.Fprintf(w, `<div class="dungeon-cell %s"></div>`, cellClass)
+			fmt.Fprintf(w, `<div class="wfc-cell %s"></div>`, cellClass)
 		}
 	}
 

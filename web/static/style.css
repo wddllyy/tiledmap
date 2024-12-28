@@ -1,0 +1,172 @@
+/* 整体布局 */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f8f9fa;
+}
+
+/* 迷宫容器样式 */
+.dungeon-container {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 8px);
+    grid-template-rows: repeat(auto-fill, 8px);
+    width: auto;
+    height: auto;
+    border: 2px solid #333;
+}
+
+/* 控制面板样式 */
+.dungeon-controls {
+    display: flex; /* 使用 flexbox 布局 */
+    flex-wrap: wrap; /* 允许换行 */
+    gap: 10px; /* 控制项之间的间距 */
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.maze-box {
+    margin: 20px; /* 添加外边距 */
+    padding: 15px; /* 添加内边距 */
+    background-color: white; /* 添加背景色 */
+    border-radius: 8px; /* 圆角边框 */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* 添加阴影效果 */
+}
+/* 迷宫网格样式 */
+.dungeon-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 8px);
+    grid-template-rows: repeat(auto-fill, 8px);
+    gap: 1px;
+    padding: 1px;
+    background-color: #ddd;
+}
+
+.dungeon-cell {
+    width: 8px;
+    height: 8px;
+}
+
+/* 辅助绘制层样式 */
+.step-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 8px);
+    grid-template-rows: repeat(auto-fill, 8px);
+    width: auto;
+    height: auto;
+    gap: 1px;
+    padding: 1px;
+}
+
+.step-info {
+    width: 8px;
+    height: 8px;
+}
+
+.wfc-grid {
+    display: grid;
+    gap: 0;
+    position: relative;
+}
+.wfc-cell {
+    width: 8px;
+    height: 8px;
+    display: inline-block;
+}
+
+.all-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+}
+.all-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+
+/* 迷宫单元格类型 */
+.wall { background-color: #666; }
+.floor { background-color: #fff; }
+.path { background-color: #339966; }
+.start { background-color: #0f0; }
+.end { background-color: #f00; }
+.grass { background-color: #228B22; }
+.water { background-color: #4169E1; }
+.sand { background-color: #EED6AF; }
+.forest { background-color: #1B6B1B; }
+.darkwater { background-color: #4169E1; }
+.room-number {
+    position: absolute;
+    color: #f00;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 1;
+}
+/* 按钮样式 */
+button {
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #1976d2;
+}
+
+/* 滑块样式 */
+input[type="range"] {
+    width: 200px;
+}
+
+/* 步骤显示样式 */
+.step-display {
+    margin: 10px 0;
+    padding: 5px 10px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* 标题样式 */
+h1, h2, h3 {
+    color: #333;
+}
+
+/* 表单样式 */
+form {
+    margin: 20px 0;
+}
+
+input[type="number"] {
+    padding: 6px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+/* 信息显示样式 */
+.info {
+    color: #666;
+    font-size: 14px;
+    margin: 10px 0;
+} 

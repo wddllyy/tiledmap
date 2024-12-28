@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -9,14 +10,14 @@ import (
 )
 
 func astarHandler(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprint(w, RenderCSS)
+	printHtmlHead(w, "迷宫寻路演示", true)
 
 	size, turnProb, accRatio, erosionRatio := parseMazeParams(req)
 
 	// 控制表单
 	fmt.Fprintf(w, `
-<div class="dungeon-container">
-	<div class="dungeon-controls">
+<div class="all-container">
+	<div class="all-controls">
 		<form>
 			尺寸: <input type="number" name="size" value="%d" min="5" max="99" step="2">
 			转弯概率: <input type="number" name="turn" value="%0.1f" step="0.1" min="0" max="1">
@@ -24,6 +25,12 @@ func astarHandler(w http.ResponseWriter, req *http.Request) {
 			侵蚀系数: <input type="number" name="erosion" value="%0.1f" step="0.1" min="0" max="1">
 			<input type="submit" value="生成">
 		</form>
+	</div>
+	<div class="playback-controls">
+		<button onclick="togglePlayback()" id="playback-btn">播放</button>
+		<input type="range" min="50" max="1000" value="200" 
+			   onchange="updateSpeed(this.value)" id="speed-control">
+		<span>更新间隔: <span id="speed-value">200</span>ms</span>
 	</div>
 	<div style="display: flex; gap: 20px; justify-content: center;">`,
 		size, turnProb, accRatio, erosionRatio)
@@ -54,9 +61,14 @@ func astarHandler(w http.ResponseWriter, req *http.Request) {
 	pathFindRes = pathfind.FindPathBestFirst(maze, start, end)
 	renderPathWithTitle(w, maze, pathFindRes, "BestFirst寻路结果") // 渲染带路径的迷宫
 
-	// 使用 bestfirst 寻路
+	// 使用 jps 寻路
 	pathFindRes = pathfind.FindPathJPS(maze, start, end)
 	renderPathWithTitle(w, maze, pathFindRes, "JPS寻路结果") // 渲染带路径的迷宫
+
+	// 使用 JPS+ 寻路
+	// preprocessedMaze := pathfind.PreprocessMaze(maze)          // 预处理迷宫
+	// pathFindRes = preprocessedMaze.FindPathJPSPlus(start, end) // 调用 JPS+ 寻路
+	// renderPathWithTitle(w, maze, pathFindRes, "JPS+寻路结果")
 
 	fmt.Fprint(w, "\n</div></div></body></html>")
 }
@@ -80,6 +92,16 @@ func renderPathWithTitle(w http.ResponseWriter, maze [][]int, res pathfind.PathF
 	for _, p := range path {
 		pathArr[p[0]][p[1]] = true
 	}
+
+	// 只保留步骤数据
+	stepsJSON, _ := json.Marshal(res.StepRecord)
+	fmt.Fprintf(w, `
+	<script>
+	if (!window.allStepsData) window.allStepsData = {};
+	window.allStepsData["%s"] = %s;
+	console.log("加载步骤数据:", "%s", window.allStepsData["%s"]);
+	</script>
+	`, title, string(stepsJSON), title, title)
 
 	renderMazePathWithTitle(w, maze, pathArr, title, info)
 }

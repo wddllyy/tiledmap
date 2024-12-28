@@ -10,22 +10,7 @@ func indexHandler(w http.ResponseWriter, req *http.Request) {
 	html := `
 	<html>
 		<head>
-			<style>
-				body { font-family: Arial, sans-serif; margin: 40px; }
-				.algorithms { margin-top: 20px; }
-				.algorithms h2 { color: #333; }
-				.algorithms ul { list-style-type: none; padding: 0; }
-				.algorithms li { margin: 10px 0; }
-				.algorithms a {
-					display: inline-block;
-					padding: 8px 16px;
-					background-color: #f0f0f0;
-					color: #333;
-					text-decoration: none;
-					border-radius: 4px;
-				}
-				.algorithms a:hover { background-color: #ddd; }
-			</style>
+			<link rel="stylesheet" href="/static/style.css">
 		</head>
 		<body>
 			<h1>地图生成算法演示</h1>
@@ -70,49 +55,6 @@ func testHandler(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(w, "Reversed path: %s\n", string(runes))
 }
 
-const RenderCSS = `
-<style>
-    .dungeon-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-        padding: 20px;
-    }
-    .dungeon-controls {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-    .dungeon-grid {
-        display: grid;
-        gap: 0;
-        position: relative;
-    }
-    .dungeon-cell {
-        width: 8px;
-        height: 8px;
-        display: inline-block;
-    }
-    .wall { background-color: #666; }
-    .floor { background-color: #fff; }
-	.path { background-color: #339966; }
-	.grass { background-color: #228B22; }
-    .water { background-color: #4169E1; }
-    .sand { background-color: #EED6AF; }
-    .forest { background-color: #1B6B1B; }
-    .darkwater { background-color: #4169E1; }
-	.start { background-color: #0f0; }
-	.end { background-color: #f00; }
-    .room-number {
-        position: absolute;
-        color: #f00;
-        font-size: 12px;
-        font-weight: bold;
-        z-index: 1;
-    }
-</style>`
-
 func printBackDiv(w http.ResponseWriter) {
 	printSomeBackDiv(1, w)
 }
@@ -123,26 +65,59 @@ func printSomeBackDiv(count int, w http.ResponseWriter) {
 	}
 }
 
+func printHtmlHead(w http.ResponseWriter, title string, includepathjs ...bool) {
+	fmt.Fprintf(w, `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>%s</title>
+    <link rel="stylesheet" href="/static/style.css">`, title)
+
+	// 检查是否需要包含 path.js
+	includeJs := false
+	if len(includepathjs) > 0 {
+		includeJs = includepathjs[0]
+	}
+
+	if includeJs {
+		fmt.Fprintf(w, `
+    <script src="/static/pathfind.js"></script>`)
+	}
+
+	fmt.Fprintf(w, `
+</head>
+<body>
+    `)
+}
+
 // 渲染带标题的迷宫
 func renderMazeWithTitle(w http.ResponseWriter, maze [][]int, title string) {
+
 	fmt.Fprintf(w, "\n<div class='maze-box'><h3>%s</h3>\n", title)
+	fmt.Fprintf(w, "\n<p style='font-size: 12px; margin-top: -15px; color: #666;'>%s</p>\n", "")
 	renderMazeWithPath(w, maze, nil, false)
-	fmt.Fprint(w, "\n</div>\n")
+	fmt.Fprintf(w, `</div>`)
 }
 
 // 渲染带标题和信息的迷宫
 func renderMazePathWithTitle(w http.ResponseWriter, maze [][]int, path [][]bool, title string, info string) {
+
 	fmt.Fprintf(w, "\n<div class='maze-box'><h3>%s</h3>\n", title)
 	fmt.Fprintf(w, "\n<p style='font-size: 12px; margin-top: -15px; color: #666;'>%s</p>\n", info)
 	renderMazeWithPath(w, maze, path, true)
-	fmt.Fprint(w, "\n</div>\n")
+
+	fmt.Fprintf(w, `</div>`)
 }
 
 func renderMazeWithPath(w http.ResponseWriter, maze [][]int, path [][]bool, showPath bool) {
 	size := len(maze)
 
 	fmt.Fprintf(w, `
-		<div class="dungeon-grid" style="grid-template-columns: repeat(%d, 8px);">`, size+2)
+		<div class="dungeon-container" style="position: relative; width: %dpx; height: %dpx;">`, (size+2)*9, (size+2)*9)
+
+	// dungeon-grid
+	fmt.Fprintf(w, `
+		<div class="dungeon-grid" style="position: absolute; top: 0; left: 0; display: grid; grid-template-columns: repeat(%d, 8px); grid-template-rows: repeat(%d, 8px);">`, size+2, size+2)
 
 	for i := 0; i < size+2; i++ {
 		fmt.Fprintf(w, `<div class="dungeon-cell wall"></div>`)
@@ -155,7 +130,6 @@ func renderMazeWithPath(w http.ResponseWriter, maze [][]int, path [][]bool, show
 			if maze[y][x] == 0 {
 				cellClass = "floor"
 			}
-			//fmt.Println(y, x)
 			if showPath && path[y][x] {
 				cellClass = "path"
 			}
@@ -167,5 +141,29 @@ func renderMazeWithPath(w http.ResponseWriter, maze [][]int, path [][]bool, show
 	for i := 0; i < size+2; i++ {
 		fmt.Fprintf(w, `<div class="dungeon-cell wall"></div>`)
 	}
+	fmt.Fprintf(w, `</div>`)
+
+	// step-layer
+	fmt.Fprintf(w, `
+		<div class="step-layer" style="position: absolute; top: 0; left: 0; display: grid; grid-template-columns: repeat(%d, 8px); grid-template-rows: repeat(%d, 8px);">`, size+2, size+2)
+	for i := 0; i < size+2; i++ {
+		fmt.Fprintf(w, `<div class="step-info"></div>`)
+	}
+	// 在这里可以添加步数信息或其他辅助信息
+	for y := 0; y < size; y++ {
+		fmt.Fprintf(w, `<div class="step-info"></div>`)
+		for x := 0; x < size; x++ {
+			if showPath && path[y][x] {
+				fmt.Fprintf(w, `<div class="step-info" style="width: 8px; height: 8px; background-color: rgba(255, 0, 0, 0.5);"></div>`)
+			} else {
+				fmt.Fprintf(w, `<div class="step-info"></div>`)
+			}
+		}
+		fmt.Fprintf(w, `<div class="step-info"></div>`)
+	}
+	for i := 0; i < size+2; i++ {
+		fmt.Fprintf(w, `<div class="step-info"></div>`)
+	}
+	fmt.Fprintf(w, `</div>`) // 结束 step-layer
 	fmt.Fprintf(w, `</div>`)
 }

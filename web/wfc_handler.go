@@ -9,7 +9,7 @@ import (
 )
 
 func wfcHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, RenderCSS)
+	printHtmlHead(w, "波函数坍塌")
 
 	// 从URL参数获取宽度和高度
 	width := 32 // 默认值
@@ -28,8 +28,8 @@ func wfcHandler(w http.ResponseWriter, r *http.Request) {
 
 	// 控制表单
 	fmt.Fprintf(w, `
-<div class="dungeon-container">
-	<div class="dungeon-controls">
+<div class="all-container">
+	<div class="all-controls">
 		<form>
 			宽度: <input type="number" name="width" value="%d" min="1" max="100">
 			高度: <input type="number" name="height" value="%d" min="1" max="100">
@@ -51,7 +51,7 @@ func renderWFCWithTitle(w http.ResponseWriter, tileMap [][]int, title string) {
 	fmt.Fprintf(w, `
 		<div>
 			<h3 style="text-align: center">%s</h3>
-			<div class="dungeon-grid">`, title)
+			<div class="wfcout-grid">`, title)
 	renderWFC(w, tileMap)
 	fmt.Fprint(w, "</div></div>")
 }
@@ -61,7 +61,7 @@ func renderWFC(w http.ResponseWriter, tileMap [][]int) {
 	width := len(tileMap[0])
 
 	fmt.Fprintf(w, `
-	<div class="dungeon-grid" style="grid-template-columns: repeat(%d, 8px);">`, width)
+	<div class="wfc-grid" style="grid-template-columns: repeat(%d, 8px);">`, width)
 
 	for y := 0; y < height; y++ {
 		for x := 0; x < width; x++ {
@@ -78,7 +78,7 @@ func renderWFC(w http.ResponseWriter, tileMap [][]int) {
 			case tiledmap.TILE_DARKWATER:
 				class = "darkwater"
 			}
-			fmt.Fprintf(w, `<div class="dungeon-cell %s"></div>`, class)
+			fmt.Fprintf(w, `<div class="wfc-cell %s"></div>`, class)
 		}
 	}
 }

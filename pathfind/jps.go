@@ -2,16 +2,19 @@ package pathfind
 
 import (
 	"container/heap"
+	"fmt"
+	"strings"
 )
 
 // JNode 表示JPS搜索中的一个节点
 type JNode struct {
-	pos    [2]int // 位置
-	g      int    // 从起点到当前点的实际代价
-	h      int    // 从当前点到终点的估计代价
-	f      int    // f = g + h
-	parent *JNode // 父节点
-	index  int    // 在优先队列中的索引
+	pos     [2]int // 位置
+	g       int    // 从起点到当前点的实际代价
+	h       int    // 从当前点到终点的估计代价
+	f       int    // f = g + h
+	parent  *JNode // 父节点
+	index   int    // 在优先队列中的索引
+	fromDir [2]int // 从父节点到当前节点的方向
 }
 
 // JPriorityQueue 实现堆接口
@@ -54,17 +57,19 @@ func isWalkable(maze [][]int, pos [2]int) bool {
 }
 
 // 在给定方向上跳跃，直到找到跳点或碰壁
-func jump(maze [][]int, current [2]int, dir [2]int, end [2]int, res *PathFindResult) [2]int {
-	res.Check++
+func jump(maze [][]int, current [2]int, dir [2]int, end [2]int, res *PathFindResult, depth int) [2]int {
 	next := [2]int{current[0] + dir[0], current[1] + dir[1]}
-
 	// 如果不可通行，返回nil
 	if !isWalkable(maze, next) {
+		//fmt.Println("unwalkable return ", next)
 		return [2]int{-1, -1}
 	}
+	res.Check++
+	fmt.Println(strings.Repeat(" ", depth), current, getStrFromDir(dir), next)
 
 	// 如果到达终点，返回当前位置
 	if next == end {
+		fmt.Println(strings.Repeat(" ", depth), "found end")
 		return next
 	}
 
@@ -75,27 +80,73 @@ func jump(maze [][]int, current [2]int, dir [2]int, end [2]int, res *PathFindRes
 			// 检查上下是否有强迫邻居
 			if isWalkable(maze, [2]int{next[0] - 1, next[1]}) && !isWalkable(maze, [2]int{next[0] - 1, current[1]}) ||
 				isWalkable(maze, [2]int{next[0] + 1, next[1]}) && !isWalkable(maze, [2]int{next[0] + 1, current[1]}) {
+				fmt.Println(strings.Repeat(" ", depth), "found -十", current, next)
+				return next
+			}
+			if isWalkable(maze, [2]int{next[0] - 1, next[1]}) && !isWalkable(maze, [2]int{next[0] + dir[0], next[1] + dir[1]}) ||
+				isWalkable(maze, [2]int{next[0] + 1, next[1]}) && !isWalkable(maze, [2]int{next[0] + dir[0], next[1] + dir[1]}) {
+				fmt.Println(strings.Repeat(" ", depth), "found -H", current, next)
 				return next
 			}
 		} else { // 垂直移动
 			// 检查左右是否有强迫邻居
 			if isWalkable(maze, [2]int{next[0], next[1] - 1}) && !isWalkable(maze, [2]int{current[0], next[1] - 1}) ||
 				isWalkable(maze, [2]int{next[0], next[1] + 1}) && !isWalkable(maze, [2]int{current[0], next[1] + 1}) {
+				fmt.Println(strings.Repeat(" ", depth), "found |十", current, next)
+				return next
+			}
+			if isWalkable(maze, [2]int{next[0], next[1] - 1}) && !isWalkable(maze, [2]int{next[0] + dir[0], next[1] + dir[1]}) ||
+				isWalkable(maze, [2]int{next[0], next[1] + 1}) && !isWalkable(maze, [2]int{next[0] + dir[0], next[1] + dir[1]}) {
+				fmt.Println(strings.Repeat(" ", depth), "found |工", current, next)
 				return next
 			}
 		}
-		return jump(maze, next, dir, end, res)
+		//fmt.Println("continue line move", next, dir)
+		return jump(maze, next, dir, end, res, depth+1)
 	}
 
-	// 对角线移动
-	// 检查水平和垂直方向是否有跳点
-	if jump(maze, next, [2]int{dir[0], 0}, end, res) != [2]int{-1, -1} ||
-		jump(maze, next, [2]int{0, dir[1]}, end, res) != [2]int{-1, -1} {
-		return next
+	// //fmt.Println("continue diagonal line move", next, dir)
+	// // 对角线移动
+	// // 检查水平和垂直方向是否有跳点
+	// if jump(maze, next, [2]int{dir[0], 0}, end, res, depth+1) != [2]int{-1, -1} ||
+	// 	jump(maze, next, [2]int{0, dir[1]}, end, res, depth+1) != [2]int{-1, -1} {
+	// 	fmt.Println(strings.Repeat(" ", depth), "found:\\", current, next)
+	// 	return next
+	// }
+
+	// //fmt.Println("continue diagonal check", next, dir)
+	// // 继续对角线移动
+	return jump(maze, next, dir, end, res, depth+1)
+}
+
+func getStrFromDir(dir [2]int) string {
+
+	if dir[0] == 0 && dir[1] == 1 {
+		return "→"
+	}
+	if dir[0] == 0 && dir[1] == -1 {
+		return "←"
+	}
+	if dir[0] == 1 && dir[1] == 0 {
+		return "↓"
+	}
+	if dir[0] == -1 && dir[1] == 0 {
+		return "↑"
+	}
+	if dir[0] == 1 && dir[1] == 1 {
+		return "↘"
+	}
+	if dir[0] == -1 && dir[1] == 1 {
+		return "↗"
+	}
+	if dir[0] == 1 && dir[1] == -1 {
+		return "↙"
+	}
+	if dir[0] == -1 && dir[1] == -1 {
+		return "↖"
 	}
 
-	// 继续对角线移动
-	return jump(maze, next, dir, end, res)
+	return " "
 }
 
 // 添加新的辅助函数，用于生成两点之间的路径
@@ -122,7 +173,7 @@ func getPointsBetween(start, end [2]int) [][2]int {
 	// 添加起点
 	current := start
 	points = append(points, current)
-
+	//fmt.Println("start", current)
 	// 先横向移动
 	for current[0] != end[0] {
 		current = [2]int{current[0] + stepX, current[1]}
@@ -143,7 +194,7 @@ func FindPathJPS(maze [][]int, start, end [2]int) PathFindResult {
 	openList := &JPriorityQueue{}
 	heap.Init(openList)
 	visited := make(map[[2]int]bool)
-
+	fmt.Println("-----------------------------------------------------")
 	// 创建起点节点
 	startNode := &JNode{
 		pos: start,
@@ -157,7 +208,7 @@ func FindPathJPS(maze [][]int, start, end [2]int) PathFindResult {
 	// 定义所有可能的方向（包括对角线）
 	dirs := [][2]int{
 		{-1, 0}, {1, 0}, {0, -1}, {0, 1}, // 基本方向
-		{-1, -1}, {-1, 1}, {1, -1}, {1, 1}, // 对角线
+		//{-1, -1}, {-1, 1}, {1, -1}, {1, 1}, // 对角线
 	}
 
 	var current *JNode
@@ -166,7 +217,7 @@ func FindPathJPS(maze [][]int, start, end [2]int) PathFindResult {
 	// 主循环
 	for openList.Len() > 0 {
 		current = heap.Pop(openList).(*JNode)
-
+		fmt.Println("pop from openlist", current.pos)
 		// 如果到达终点
 		if current.pos == end {
 			break
@@ -177,28 +228,33 @@ func FindPathJPS(maze [][]int, start, end [2]int) PathFindResult {
 
 		// 在每个方向上寻找跳点
 		for _, dir := range dirs {
-			jumpPoint := jump(maze, current.pos, dir, end, &res)
+			// 跳过与来源方向相反的方向
+			if current.parent != nil {
+				// 如果当前方向与来源方向相反，跳过
+				if dir[0] == -current.fromDir[0] && dir[1] == -current.fromDir[1] {
+					continue
+				}
+			}
+
+			jumpPoint := jump(maze, current.pos, dir, end, &res, 0)
 			if jumpPoint == [2]int{-1, -1} || visited[jumpPoint] {
 				continue
 			}
 
-			// 计算代价
-			// dx := jumpPoint[0] - current.pos[0]
-			// dy := jumpPoint[1] - current.pos[1]
 			distance := manhattanDistance(current.pos, jumpPoint)
-
-			// 创建新节点
 			neighbor := &JNode{
-				pos:    jumpPoint,
-				g:      current.g + distance,
-				h:      manhattanDistance(jumpPoint, end),
-				parent: current,
+				pos:     jumpPoint,
+				g:       current.g + distance,
+				h:       manhattanDistance(jumpPoint, end),
+				parent:  current,
+				fromDir: dir, // 记录来源方向
 			}
 			neighbor.f = neighbor.g + neighbor.h
 			res.Cost++
 
 			// 添加到优先队列
 			heap.Push(openList, neighbor)
+			fmt.Println("push to openlist", neighbor.pos, " parent:", current.pos)
 		}
 	}
 
@@ -218,6 +274,7 @@ func FindPathJPS(maze [][]int, start, end [2]int) PathFindResult {
 			intermediatePoints := getPointsBetween(nodes[i].pos, nodes[i+1].pos)
 			//fmt.Println(intermediatePoints)
 			res.Path = append(res.Path, intermediatePoints[1:]...)
+			//res.Path = append(res.Path, nodes[i].pos)
 		}
 	}
 
