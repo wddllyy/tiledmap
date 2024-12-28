@@ -154,7 +154,7 @@ func renderMazeWithPath(w http.ResponseWriter, maze [][]int, path [][]bool, show
 		fmt.Fprintf(w, `<div class="step-info"></div>`)
 		for x := 0; x < size; x++ {
 			if showPath && path[y][x] {
-				fmt.Fprintf(w, `<div class="step-info" style="width: 8px; height: 8px; background-color: rgba(255, 0, 0, 0.5);"></div>`)
+				fmt.Fprintf(w, `<div class="step-info" style="width: 4px; height: 4px; background-color: rgba(255, 0, 0, 0.5);"></div>`)
 			} else {
 				fmt.Fprintf(w, `<div class="step-info"></div>`)
 			}
