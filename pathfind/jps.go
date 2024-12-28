@@ -2,8 +2,6 @@ package pathfind
 
 import (
 	"container/heap"
-	"fmt"
-	"strings"
 )
 
 // JNode 表示JPS搜索中的一个节点
@@ -65,11 +63,11 @@ func jump(maze [][]int, current [2]int, dir [2]int, end [2]int, res *PathFindRes
 		return [2]int{-1, -1}
 	}
 	res.Check++
-	fmt.Println(strings.Repeat(" ", depth), current, getStrFromDir(dir), next)
+	//fmt.Println(strings.Repeat(" ", depth), current, getStrFromDir(dir), next)
 
 	// 如果到达终点，返回当前位置
 	if next == end {
-		fmt.Println(strings.Repeat(" ", depth), "found end")
+		//fmt.Println(strings.Repeat(" ", depth), "found end")
 		return next
 	}
 
@@ -80,24 +78,24 @@ func jump(maze [][]int, current [2]int, dir [2]int, end [2]int, res *PathFindRes
 			// 检查上下是否有强迫邻居
 			if isWalkable(maze, [2]int{next[0] - 1, next[1]}) && !isWalkable(maze, [2]int{next[0] - 1, current[1]}) ||
 				isWalkable(maze, [2]int{next[0] + 1, next[1]}) && !isWalkable(maze, [2]int{next[0] + 1, current[1]}) {
-				fmt.Println(strings.Repeat(" ", depth), "found -十", current, next)
+				//fmt.Println(strings.Repeat(" ", depth), "found -十", current, next)
 				return next
 			}
 			if isWalkable(maze, [2]int{next[0] - 1, next[1]}) && !isWalkable(maze, [2]int{next[0] + dir[0], next[1] + dir[1]}) ||
 				isWalkable(maze, [2]int{next[0] + 1, next[1]}) && !isWalkable(maze, [2]int{next[0] + dir[0], next[1] + dir[1]}) {
-				fmt.Println(strings.Repeat(" ", depth), "found -H", current, next)
+				//fmt.Println(strings.Repeat(" ", depth), "found -H", current, next)
 				return next
 			}
 		} else { // 垂直移动
 			// 检查左右是否有强迫邻居
 			if isWalkable(maze, [2]int{next[0], next[1] - 1}) && !isWalkable(maze, [2]int{current[0], next[1] - 1}) ||
 				isWalkable(maze, [2]int{next[0], next[1] + 1}) && !isWalkable(maze, [2]int{current[0], next[1] + 1}) {
-				fmt.Println(strings.Repeat(" ", depth), "found |十", current, next)
+				//fmt.Println(strings.Repeat(" ", depth), "found |十", current, next)
 				return next
 			}
 			if isWalkable(maze, [2]int{next[0], next[1] - 1}) && !isWalkable(maze, [2]int{next[0] + dir[0], next[1] + dir[1]}) ||
 				isWalkable(maze, [2]int{next[0], next[1] + 1}) && !isWalkable(maze, [2]int{next[0] + dir[0], next[1] + dir[1]}) {
-				fmt.Println(strings.Repeat(" ", depth), "found |工", current, next)
+				//fmt.Println(strings.Repeat(" ", depth), "found |工", current, next)
 				return next
 			}
 		}
@@ -194,7 +192,7 @@ func FindPathJPS(maze [][]int, start, end [2]int) PathFindResult {
 	openList := &JPriorityQueue{}
 	heap.Init(openList)
 	visited := make(map[[2]int]bool)
-	fmt.Println("-----------------------------------------------------")
+	//fmt.Println("-----------------------------------------------------")
 	// 创建起点节点
 	startNode := &JNode{
 		pos: start,
@@ -217,7 +215,12 @@ func FindPathJPS(maze [][]int, start, end [2]int) PathFindResult {
 	// 主循环
 	for openList.Len() > 0 {
 		current = heap.Pop(openList).(*JNode)
-		fmt.Println("pop from openlist", current.pos)
+		//fmt.Println("pop from openlist", current.pos)
+		res.StepRecord.Steps = append(res.StepRecord.Steps, MazeStep{
+			Pos:  current.pos,
+			Type: "pop", // 标记为已检查
+			Dir:  [2]int{0, 0},
+		})
 		// 如果到达终点
 		if current.pos == end {
 			break
@@ -254,7 +257,12 @@ func FindPathJPS(maze [][]int, start, end [2]int) PathFindResult {
 
 			// 添加到优先队列
 			heap.Push(openList, neighbor)
-			fmt.Println("push to openlist", neighbor.pos, " parent:", current.pos)
+			res.StepRecord.Steps = append(res.StepRecord.Steps, MazeStep{
+				Pos:  neighbor.pos,
+				Type: "push", // 标记为已检查
+				Dir:  [2]int{0, 0},
+			})
+			//fmt.Println("push to openlist", neighbor.pos, " parent:", current.pos)
 		}
 	}
 

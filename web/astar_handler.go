@@ -31,6 +31,7 @@ func astarHandler(w http.ResponseWriter, req *http.Request) {
 		<input type="range" min="50" max="1000" value="200" 
 			   onchange="updateSpeed(this.value)" id="speed-control">
 		<span>更新间隔: <span id="speed-value">200</span>ms</span>
+		<button onclick="stepPlayback()" id="playback-btn">Step</button>
 	</div>
 	<div style="display: flex; gap: 20px; justify-content: center;">`,
 		size, turnProb, accRatio, erosionRatio)
@@ -99,7 +100,7 @@ func renderPathWithTitle(w http.ResponseWriter, maze [][]int, res pathfind.PathF
 	<script>
 	if (!window.allStepsData) window.allStepsData = {};
 	window.allStepsData["%s"] = %s;
-	console.log("加载步骤数据:", "%s", window.allStepsData["%s"]);
+	//console.log("加载步骤数据:", "%s", window.allStepsData["%s"]);
 	</script>
 	`, title, string(stepsJSON), title, title)
 

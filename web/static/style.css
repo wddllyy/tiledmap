@@ -18,17 +18,6 @@ body {
     border: 2px solid #333;
 }
 
-/* 控制面板样式 */
-.dungeon-controls {
-    display: flex; /* 使用 flexbox 布局 */
-    flex-wrap: wrap; /* 允许换行 */
-    gap: 10px; /* 控制项之间的间距 */
-    margin-bottom: 20px;
-    padding: 10px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
 .maze-box {
     margin: 20px; /* 添加外边距 */
     padding: 15px; /* 添加内边距 */
@@ -71,6 +60,20 @@ body {
 .step-info {
     width: 8px;
     height: 8px;
+}
+
+.step-info.push-dot {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    background-color: rgb(0, 0, 255, 0.5);
+
+}
+.step-info.pop-dot{
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background-color: rgba(255, 0, 0, 0.5);
 }
 
 .wfc-grid {

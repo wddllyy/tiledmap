@@ -2,7 +2,7 @@ let currentPlayback = null;
 let playbackSpeed = 200;
 
 let isPlaying = false;
-
+window.step = 0;  // 添加初始化
 function togglePlayback() {
     const playbackBtn = document.getElementById('playback-btn');
     
@@ -22,6 +22,10 @@ function togglePlayback() {
     isPlaying = !isPlaying;
 }
 
+function stepPlayback() {
+    renderAllSteps();
+}
+
 function updateSpeed(value) {
     playbackSpeed = parseInt(value);
     document.getElementById('speed-value').textContent = value;
@@ -32,93 +36,82 @@ function updateSpeed(value) {
     }
 }
 
+function renderAllSteps() {
+    Object.keys(window.allStepsData).forEach(title => {
+        const stepsData = window.allStepsData[title];
+        if (!stepsData || !stepsData.Steps || window.step >= stepsData.Steps.length) {
+            return;
+        }
+    
+        // 查找迷宫容器
+        const mazeContainer = document.querySelector(`.maze-box[data-title="${title}"]`);
+        if (!mazeContainer) {
+            console.error('找不到迷宫容器:', title);
+            return;
+        }
+
+        // 更新步骤显示
+        let stepDisplay = mazeContainer.querySelector('.step-display');
+        if (!stepDisplay) {
+            stepDisplay = document.createElement('div');
+            stepDisplay.className = 'step-display';
+            mazeContainer.appendChild(stepDisplay);
+        }
+        stepDisplay.textContent = `步骤: ${window.step + 1} / ${stepsData.Steps.length}`;
+        
+        // 更新单元格
+        const currentStepData = stepsData.Steps[window.step];
+        updateStepCell(title, currentStepData);
+    });
+    window.step++;
+}
+
 function startPlayback() {
     if (currentPlayback) {
         clearInterval(currentPlayback);
     }
     
-    const allStepsData = window.allStepsData;
-    
-    let step = 0
-    //console.log('allStepsData :', allStepsData);
-
-    // 创建单个 renderStep 函数
-    function renderStep() {
-        Object.keys(allStepsData).forEach(title => {
-            const stepsData = allStepsData[title];
-            //console.log('title: ', title,' stepsData :', stepsData," stepsData.Steps:", stepsData.Steps);
-            if (!stepsData || !stepsData.Steps) {
-                //console.error('无效的 stepsData 或 stepsData.Steps:', title);
-                return;
-            }
-            if (step >= stepsData.Steps.length) {
-                return;
-            }
-        
-            // 查找或创建步骤显示元素
-            const mazeContainer = document.querySelector(`.dungeon-container[data-title="${title}"]`);
-            let stepDisplay = document.getElementById(`step-display-${title}`);
-            if (!stepDisplay) {
-                stepDisplay = document.createElement('div');
-                stepDisplay.id = `step-display-${title}`;
-                stepDisplay.className = 'step-display';
-                mazeContainer.appendChild(stepDisplay);
-            }
-            
-            //console.log('当前步骤数据:', stepsData[step]);
-            stepDisplay.textContent = `当前步骤: ${step + 1} / ${stepsData.length}`;
-            
-            // 绘制当前步骤的单元格
-            const currentStepData = stepsData.Steps[step];
-            //console.log('stepsData :', stepsData, " step :", step, " currentStepData :", currentStepData);
-            updateMazeCell(title, currentStepData);
-        });
-        step++;
-    }
-    
-    // 使用单个计时器
-    currentPlayback = setInterval(renderStep, playbackSpeed);
+    currentPlayback = setInterval(renderAllSteps, playbackSpeed);
 }
 
-function updateMazeCell(title, stepData) {
-    // 1. 首先找到对应的迷宫容器
-    const mazeContainer = document.querySelector(`.dungeon-container[data-title="${title}"]`);
+function updateStepCell(title, stepData) {
+    // 找到对应的迷宫容器
+    const mazeContainer = document.querySelector(`.maze-box[data-title="${title}"]`);
     if (!mazeContainer) {
         console.error('找不到迷宫容器:', title);
         return;
     }
 
-    // 2. 找到迷宫网格
-    const dungeonGrid = mazeContainer.querySelector('.dungeon-grid');
-    if (!dungeonGrid) {
-        console.error('找不到迷宫网格:', title);
+    // 找到step-layer
+    const stepLayer = mazeContainer.querySelector('.step-layer');
+    if (!stepLayer) {
+        console.error('找不到step-layer:', title);
         return;
     }
-    //console.log('dungeonGrid :', dungeonGrid);
-
-    // 3. 从grid-template-columns样式中获取迷宫的宽度
-    const gridStyle = window.getComputedStyle(dungeonGrid);
-    const columnsCount = gridStyle.gridTemplateColumns.split(' ').length;
-    //console.log('gridStyle :', gridStyle, ' columnsCount :', columnsCount);
-
-    // 3. 计算实际的单元格索引（考虑边框）
-    // 由于周围有一圈墙壁，所以需要调整位置
+    //console.log("stepData:", stepLayer, " stepLayer.style.gridTemplateColumns", stepLayer.style.gridTemplateColumns);
+    // 计算在step-layer中的位置
+    const size = parseInt(stepLayer.style.gridTemplateColumns.match(/repeat\((\d+), 8px\)/)[1]);
     const row = stepData.Pos[0];
     const col = stepData.Pos[1];
-    const index = (row + 1) * columnsCount + (col + 1); // +1 是因为周围有墙
+    const index = (row + 1) * (size) + (col + 1); // +1 是因为周围有墙
+    //console.log("size:", size, "row:", row, "col:", col, "index:", index);
 
-    console.log('row :', row, ' col :', col,' index :', index);
-    // 4. 获取对应的单元格
-    const cell = dungeonGrid.children[index];
-    if (!cell) {
-        console.error('找不到单元格:', row, col);
+    // 获取对应的step-info单元格
+    const stepInfo = stepLayer.children[index];
+    if (!stepInfo) {
+        console.error('找不到step-info单元格:', row, col);
         return;
     }
 
-    // 5. 更新 MazeStep 层
-    const mazeStepLayer = cell.querySelector('.maze-step');
-    if (mazeStepLayer) {
-        mazeStepLayer.className = 'maze-step ' + getClassForType(stepData.Type);
+    // 根据类型添加新的点
+    if (stepData.Type === "pop") { // 已检查的格子
+        const dot = document.createElement('div');
+        dot.className = 'step-info pop-dot';
+        stepInfo.appendChild(dot);
+    } else if (stepData.Type === "push") { // 路径
+        const dot = document.createElement('div');
+        dot.className = 'step-info push-dot';
+        stepInfo.appendChild(dot);
     }
 }
 

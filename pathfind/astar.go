@@ -92,7 +92,7 @@ func FindPathAStar(maze [][]int, start, end [2]int) PathFindResult {
 		// 记录这一步
 		res.StepRecord.Steps = append(res.StepRecord.Steps, MazeStep{
 			Pos:  current.pos,
-			Type: 2, // 标记为已检查
+			Type: "pop", // 标记为已检查
 			Dir:  [2]int{0, 0},
 		})
 
@@ -136,6 +136,11 @@ func FindPathAStar(maze [][]int, start, end [2]int) PathFindResult {
 			res.Cost++
 			// 添加到开放列表
 			heap.Push(openList, neighbor)
+			res.StepRecord.Steps = append(res.StepRecord.Steps, MazeStep{
+				Pos:  neighbor.pos,
+				Type: "push", // 标记为已检查
+				Dir:  [2]int{0, 0},
+			})
 		}
 	}
 

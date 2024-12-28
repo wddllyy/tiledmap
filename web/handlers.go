@@ -92,8 +92,8 @@ func printHtmlHead(w http.ResponseWriter, title string, includepathjs ...bool) {
 
 // 渲染带标题的迷宫
 func renderMazeWithTitle(w http.ResponseWriter, maze [][]int, title string) {
-
-	fmt.Fprintf(w, "\n<div class='maze-box'><h3>%s</h3>\n", title)
+	fmt.Fprintf(w, "\n<div class='maze-box' data-title=\"%s\">", title)
+	fmt.Fprintf(w, "<h3>%s</h3>\n", title)
 	fmt.Fprintf(w, "\n<p style='font-size: 12px; margin-top: -15px; color: #666;'>%s</p>\n", "")
 	renderMazeWithPath(w, maze, nil, false)
 	fmt.Fprintf(w, `</div>`)
@@ -101,11 +101,10 @@ func renderMazeWithTitle(w http.ResponseWriter, maze [][]int, title string) {
 
 // 渲染带标题和信息的迷宫
 func renderMazePathWithTitle(w http.ResponseWriter, maze [][]int, path [][]bool, title string, info string) {
-
-	fmt.Fprintf(w, "\n<div class='maze-box'><h3>%s</h3>\n", title)
+	fmt.Fprintf(w, "\n<div class='maze-box' data-title=\"%s\">", title)
+	fmt.Fprintf(w, "<h3>%s</h3>\n", title)
 	fmt.Fprintf(w, "\n<p style='font-size: 12px; margin-top: -15px; color: #666;'>%s</p>\n", info)
 	renderMazeWithPath(w, maze, path, true)
-
 	fmt.Fprintf(w, `</div>`)
 }
 
@@ -117,7 +116,7 @@ func renderMazeWithPath(w http.ResponseWriter, maze [][]int, path [][]bool, show
 
 	// dungeon-grid
 	fmt.Fprintf(w, `
-		<div class="dungeon-grid" style="position: absolute; top: 0; left: 0; display: grid; grid-template-columns: repeat(%d, 8px); grid-template-rows: repeat(%d, 8px);">`, size+2, size+2)
+		<div class="dungeon-grid" style="grid-template-columns: repeat(%d, 8px); grid-template-rows: repeat(%d, 8px);">`, size+2, size+2)
 
 	for i := 0; i < size+2; i++ {
 		fmt.Fprintf(w, `<div class="dungeon-cell wall"></div>`)
@@ -145,7 +144,7 @@ func renderMazeWithPath(w http.ResponseWriter, maze [][]int, path [][]bool, show
 
 	// step-layer
 	fmt.Fprintf(w, `
-		<div class="step-layer" style="position: absolute; top: 0; left: 0; display: grid; grid-template-columns: repeat(%d, 8px); grid-template-rows: repeat(%d, 8px);">`, size+2, size+2)
+		<div class="step-layer" style="grid-template-columns: repeat(%d, 8px); grid-template-rows: repeat(%d, 8px);">`, size+2, size+2)
 	for i := 0; i < size+2; i++ {
 		fmt.Fprintf(w, `<div class="step-info"></div>`)
 	}
@@ -154,7 +153,8 @@ func renderMazeWithPath(w http.ResponseWriter, maze [][]int, path [][]bool, show
 		fmt.Fprintf(w, `<div class="step-info"></div>`)
 		for x := 0; x < size; x++ {
 			if showPath && path[y][x] {
-				fmt.Fprintf(w, `<div class="step-info" style="width: 4px; height: 4px; background-color: rgba(255, 0, 0, 0.5);"></div>`)
+				//fmt.Fprintf(w, `<div class="step-info" style="width: 4px; height: 4px; background-color: rgba(255, 0, 0, 0.5); margin: auto;"></div>`)
+				fmt.Fprintf(w, `<div class="step-info path-dot"></div>`)
 			} else {
 				fmt.Fprintf(w, `<div class="step-info"></div>`)
 			}

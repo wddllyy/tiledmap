@@ -69,7 +69,11 @@ func FindPathDijkstra(maze [][]int, start, end [2]int) PathFindResult {
 	for openList.Len() > 0 {
 
 		current = heap.Pop(openList).(*DNode)
-
+		res.StepRecord.Steps = append(res.StepRecord.Steps, MazeStep{
+			Pos:  current.pos,
+			Type: "pop", // 标记为已检查
+			Dir:  [2]int{0, 0},
+		})
 		// 如果到达终点
 		if current.pos == end {
 			break
