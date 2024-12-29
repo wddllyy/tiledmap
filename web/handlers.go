@@ -13,15 +13,21 @@ func indexHandler(w http.ResponseWriter, req *http.Request) {
 			<link rel="stylesheet" href="/static/style.css">
 		</head>
 		<body>
-			<h1>地图生成算法演示</h1>
+			<h1>地图算法演示</h1>
 			<div class="algorithms">
-				<h2>可用算法</h2>
+				<h2>生成算法</h2>
 				<ul>
 					<li><a href="/cellular">元胞自动机 (Cellular Automata)</a></li>
 					<li><a href="/dungeon">地下城生成器 (Dungeon Generator)</a></li>
 					<li><a href="/maze">迷宫生成器 (Maze Generator)</a></li>
 					<li><a href="/perlin">柏林噪声地图 (Perlin Noise Map)</a></li>
 					<li><a href="/wfc">波函数坍缩 (Wave Function Collapse)</a></li>
+				</ul>
+			</div>
+			<div class="pathfind">
+				<h2>寻路算法</h2>
+				<ul>
+					<li><a href="/astar">综合比照 (PathFind MISC)</a></li>
 				</ul>
 			</div>
 			<div class="algorithms">

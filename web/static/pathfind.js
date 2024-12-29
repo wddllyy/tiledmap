@@ -114,15 +114,3 @@ function updateStepCell(title, stepData) {
         stepInfo.appendChild(dot);
     }
 }
-
-function getClassForType(type) {
-    switch (type) {
-        case 0: return 'floor';   // 空地
-        case 1: return 'wall';    // 墙
-        case 2: return 'checked'; // 已检查的格子
-        case 3: return 'start';   // 起点
-        case 4: return 'end';     // 终点
-        case 5: return 'path';    // 最终路径
-        default: return 'floor';
-    }
-}
