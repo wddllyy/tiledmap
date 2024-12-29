@@ -67,9 +67,9 @@ func astarHandler(w http.ResponseWriter, req *http.Request) {
 	renderPathWithTitle(w, maze, pathFindRes, "JPS寻路结果") // 渲染带路径的迷宫
 
 	// 使用 JPS+ 寻路
-	// preprocessedMaze := pathfind.PreprocessMaze(maze)          // 预处理迷宫
-	// pathFindRes = preprocessedMaze.FindPathJPSPlus(start, end) // 调用 JPS+ 寻路
-	// renderPathWithTitle(w, maze, pathFindRes, "JPS+寻路结果")
+	preprocessedMaze := pathfind.PreprocessMaze(maze)          // 预处理迷宫
+	pathFindRes = preprocessedMaze.FindPathJPSPlus(start, end) // 调用 JPS+ 寻路
+	renderPathWithTitle(w, maze, pathFindRes, "JPS+寻路结果")
 
 	fmt.Fprint(w, "\n</div></div></body></html>")
 }

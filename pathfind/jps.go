@@ -187,6 +187,31 @@ func getPointsBetween(start, end [2]int) [][2]int {
 	return points
 }
 
+// rebuildPath 从跳点重建完整路径
+func rebuildPath(current *JNode) [][2]int {
+	if current == nil {
+		return make([][2]int, 0)
+	}
+
+	// 收集所有跳点
+	var nodes []*JNode
+	for node := current; node != nil; node = node.parent {
+		nodes = append([]*JNode{node}, nodes...)
+	}
+
+	path := make([][2]int, 0)
+	// 添加起点
+	path = append(path, nodes[0].pos)
+
+	// 在每对跳点之间添加中间点
+	for i := 0; i < len(nodes)-1; i++ {
+		intermediatePoints := getPointsBetween(nodes[i].pos, nodes[i+1].pos)
+		path = append(path, intermediatePoints[1:]...)
+	}
+
+	return path
+}
+
 func FindPathJPS(maze [][]int, start, end [2]int) PathFindResult {
 	// 初始化优先队列和访问集合
 	openList := &JPriorityQueue{}
@@ -266,25 +291,8 @@ func FindPathJPS(maze [][]int, start, end [2]int) PathFindResult {
 		}
 	}
 
-	// 重建路径
-	res.Path = make([][2]int, 0)
-	if current != nil {
-		var nodes []*JNode
-		for node := current; node != nil; node = node.parent {
-			nodes = append([]*JNode{node}, nodes...)
-		}
-
-		// 添加起点
-		res.Path = append(res.Path, nodes[0].pos)
-
-		// 在每对跳点之间添加中间点
-		for i := 0; i < len(nodes)-1; i++ {
-			intermediatePoints := getPointsBetween(nodes[i].pos, nodes[i+1].pos)
-			//fmt.Println(intermediatePoints)
-			res.Path = append(res.Path, intermediatePoints[1:]...)
-			//res.Path = append(res.Path, nodes[i].pos)
-		}
-	}
+	// 使用新函数重建路径
+	res.Path = rebuildPath(current)
 
 	return res
 }
